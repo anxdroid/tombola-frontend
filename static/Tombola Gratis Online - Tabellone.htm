@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)https://tombolagratis.it/tabellone -->
+<html lang="it"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript">
+    (function() {
+      var container = document.querySelector('#_tcx-89c3o1j2qdu');
+      if (!container) {
+        return;
+      }
+
+      function addToContainer(url, text) {
+        const wrapper = document.createElement('div');
+        wrapper.setAttribute('data-tcx-url', url);
+        wrapper.innerText = text;
+        container.appendChild(wrapper);
+      }
+
+      const fetch = window.fetch
+      window.fetch = function() {
+        return Promise.resolve(fetch.apply(window, arguments))
+            .then(async response => {
+              if (response.ok) {
+                try {
+                  const clone = response.clone();
+                  const json = await clone.json();
+                  addToContainer(clone.url, JSON.stringify(json));
+                } catch (err) {}
+              }
+              return response;
+            });
+      };
+
+      var XHR = XMLHttpRequest.prototype;
+      var send = XHR.send;
+      var open = XHR.open;
+      XHR.open = function(method, url) {
+        this.url = url;
+        return open.apply(this, arguments);
+      };
+      XHR.send = function() {
+        this.addEventListener('load', function() {
+          try {
+            const response = this.response;
+            if (response && response.length) {
+              const firstChar = response[0];
+              if (firstChar === '[' || firstChar === '{') {
+                addToContainer(this.url, response);
+              }
+            }
+          } catch (err) {
+            // No-op.
+          }
+        });
+        return send.apply(this, arguments);
+      };
+    })();
+  </script>
+<title>Tombola Gratis Online - Tabellone</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta property="og:title" content="Tombola Gratis Online">
+<meta property="og:description" content="Non trovi la scatola della tombola? Sedetevi comodi! Collegatevi a TombolaGratis.it da PC, Tablet o Smartphone. Scegliete chi tra voi userà il Tabellone, gli altri parteciperanno con le Cartelle.">
+<meta property="og:url" content="https://tombolagratis.it">
+<meta property="og:image" content="https://tombolagratis.it/img/shareImage02.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tombolagratis.it">
+<link rel="shortcut icon" href="https://tombolagratis.it/favicon.ico">
+<link rel="apple-touch-icon" href="https://tombolagratis.it/img/apple-touch-icon.png">
+<link rel="stylesheet" type="text/css" href="./Tombola Gratis Online - Tabellone_files/style.css" media="all">
+<script async="" src="./Tombola Gratis Online - Tabellone_files/analytics.js"></script><script src="./Tombola Gratis Online - Tabellone_files/jquery.min.js"></script>
+<script type="text/javascript">
+	var napoletana = [
+		{"number": "1", "text": "L'Italia", "translation": ""},
+		{"number": "2", "text": "'A criatura", "translation": "il bimbo"},
+		{"number": "3", "text": "'A jatta", "translation": "il gatto"},
+		{"number": "4", "text": "'O puorco", "translation": "il maiale"},
+		{"number": "5", "text": "'A mano", "translation": "la mano"},
+		{"number": "6", "text": "Chella che guarda 'nterra", "translation": "organo sessuale femminile"},
+		{"number": "7", "text": "'A scuppetta", "translation": "il fucile"},
+		{"number": "8", "text": "'A maronna", "translation": "la madonna"},
+		{"number": "9", "text": "'A figliata", "translation": "la prole"},
+		{"number": "10", "text": "'E fasule", "translation": "i fagioli"},
+		{"number": "11", "text": "'E surice", "translation": "i topi"},
+		{"number": "12", "text": "'E surdate", "translation": "i soldati"},
+		{"number": "13", "text": "Sant'Antonio", "translation": ""},
+		{"number": "14", "text": "'O mbriaco", "translation": "l'ubriaco"},
+		{"number": "15", "text": "'O guaglione", "translation": "il ragazzo"},
+		{"number": "16", "text": "'O culo", "translation": "il deretano"},
+		{"number": "17", "text": "'A disgrazia", "translation": "la disgrazia"},
+		{"number": "18", "text": "'O sanghe", "translation": " il sangue"},
+		{"number": "19", "text": "'A resata", "translation": "la risata"},
+		{"number": "20", "text": "'A festa", "translation": "la festa"},
+		{"number": "21", "text": "'A femmena annura", "translation": "la donna nuda"},
+		{"number": "22", "text": "'O pazzo", "translation": "il pazzo"},
+		{"number": "23", "text": "'O scemo", "translation": "lo scemo"},
+		{"number": "24", "text": "'E gguardie", "translation": "le guardie"},
+		{"number": "25", "text": "Natale", "translation": ""},
+		{"number": "26", "text": "Nanninella", "translation": "diminuitivo del nome Anna"},
+		{"number": "27", "text": "'O cantero", "translation": "il vaso da notte"},
+		{"number": "28", "text": "'E zzizze", "translation": "il seno"},
+		{"number": "29", "text": "'O pate d''e criature", "translation": "organo sessuale maschile"},
+		{"number": "30", "text": "'E palle d''o tenente", "translation": "le palle del tenente"},
+		{"number": "31", "text": "'O padrone ' e casa", "translation": "il proprietario di casa"},
+		{"number": "32", "text": "'O capitone", "translation": "il capitone"},
+		{"number": "33", "text": "Ll'anne ' e Cristo", "translation": "gli anni di Cristo"},
+		{"number": "34", "text": "'A capa", "translation": "la testa"},
+		{"number": "35", "text": "L'aucielluzzo", "translation": "l'uccellino"},
+		{"number": "36", "text": "'E castagnelle", "translation": "sorta di petardi"},
+		{"number": "37", "text": "'O monaco", "translation": "il frate"},
+		{"number": "38", "text": "'E mmazzate", "translation": "le botte"},
+		{"number": "39", "text": "'A funa 'nganna", "translation": "la corda la collo"},
+		{"number": "40", "text": "'A paposcia", "translation": "ernia inguinale"},
+		{"number": "41", "text": "'O curtiello", "translation": "il coltello"},
+		{"number": "42", "text": "'O ccafè", "translation": "il caffè"},
+		{"number": "43", "text": "'A femmena 'ncopp'' o balcone", "translation": "la donna al balcone"},
+		{"number": "44", "text": "'E ccancelle", "translation": "il carcere"},
+		{"number": "45", "text": "'O vino", "translation": "il vino"},
+		{"number": "46", "text": "'E denare", "translation": "i denari"},
+		{"number": "47", "text": "'O muorto", "translation": "il morto"},
+		{"number": "48", "text": "'O muorto che parla", "translation": "il morto che parla"},
+		{"number": "49", "text": "'O piezzo ' e carne", "translation": "il pezzo di carne"},
+		{"number": "50", "text": "'O ppane", "translation": "il pane"},
+		{"number": "51", "text": "'O ciardino", "translation": "il giardino"},
+		{"number": "52", "text": "'A mamma", "translation": "la mamma"},
+		{"number": "53", "text": "'O viecchio", "translation": "il vecchio"},
+		{"number": "54", "text": "'O cappiello", "translation": "il cappello"},
+		{"number": "55", "text": "'A museca", "translation": "la musica"},
+		{"number": "56", "text": "'A caruta", "translation": "la caduta"},
+		{"number": "57", "text": "'O scartellato", "translation": "il gobbo"},
+		{"number": "58", "text": "'O paccotto", "translation": "l'imbroglio"},
+		{"number": "59", "text": "'E pile", "translation": "i peli"},
+		{"number": "60", "text": "Se lamenta", "translation": "si lamenta"},
+		{"number": "61", "text": "'O cacciatore", "translation": "il cacciatore"},
+		{"number": "62", "text": "'O muorto acciso", "translation": "il morto ammazzato"},
+		{"number": "63", "text": "'A sposa", "translation": "la sposa"},
+		{"number": "64", "text": "'A sciammeria", "translation": "la marsina"},
+		{"number": "65", "text": "'O chianto", "translation": "il pianto"},
+		{"number": "66", "text": "'E ddoie zetelle", "translation": "le due zitelle"},
+		{"number": "67", "text": "'O totano int''a chitarra", "translation": "il totano nella chitarra"},
+		{"number": "68", "text": "'A zuppa cotta", "translation": "la zuppa cotta"},
+		{"number": "69", "text": "Sott'e'ncoppo", "translation": "sottosopra"},
+		{"number": "70", "text": "'O palazzo", "translation": "il palazzo"},
+		{"number": "71", "text": "L'ommo 'e merda", "translation": "l'uomo senza princìpi"},
+		{"number": "72", "text": "'A meraviglia", "translation": "la meraviglia"},
+		{"number": "73", "text": "'O spitale", "translation": "l'ospedale"},
+		{"number": "74", "text": "'A rotta", "translation": "la grotta"},
+		{"number": "75", "text": "Pullecenella", "translation": "Pulcinella"},
+		{"number": "76", "text": "'A funtana", "translation": "la fontana"},
+		{"number": "77", "text": "'E diavule", "translation": "i diavoli"},
+		{"number": "78", "text": "'A bella figliola", "translation": "la bella ragazza"},
+		{"number": "79", "text": "'O mariuolo", "translation": "il ladro"},
+		{"number": "80", "text": "'A vocca", "translation": "la bocca"},
+		{"number": "81", "text": "'E sciure", "translation": "i fiori"},
+		{"number": "82", "text": "'A tavula 'mbandita", "translation": "la tavola imbandita"},
+		{"number": "83", "text": "'O maletiempo", "translation": "il maltempo"},
+		{"number": "84", "text": "'A cchiesa", "translation": "la chiesa"},
+		{"number": "85", "text": "Ll'aneme 'o priatorio", "translation": "le anime del purgatorio"},
+		{"number": "86", "text": "'A puteca", "translation": "il negozio"},
+		{"number": "87", "text": "'E perucchie", "translation": "i pidocchi"},
+		{"number": "88", "text": "'E casecavalle", "translation": "i caciocavalli"},
+		{"number": "89", "text": "'A vecchia", "translation": "la vecchia"},
+		{"number": "90", "text": "'A paura", "translation": "la paura"}
+	];
+
+	var foo = [];
+
+	$( document ).ready(function() {
+        var tabellone = $('#tabellaInner');
+
+		function generateNumbers() {
+            tabellone.empty();
+			for(var i=0;i<180;i++) {
+                if (i < 90) {
+                    tabellone.append($('<div class="cell"><span class="circle" id="id'+i+'">' + (i + 1) + '</span></div>'));
+                }
+				foo.push((i+1) > 90 ? (i-89) : (i+1));
+			}
+		}
+
+		generateNumbers();
+
+		$('#extract').click(function() {
+			if (foo.length == 0) {
+                $(this).text('Estrai numero');
+                $('#number').text('');
+				$('#didascalia').text('');
+                $('#traduzione').text('');
+				generateNumbers();
+			} else {
+				var randomIndex = Math.floor((Math.random() * foo.length));
+
+				$('#number').text(foo[randomIndex]);
+				napoletanaIndex = foo[randomIndex]-1;
+
+                $('#id'+napoletanaIndex).addClass('selected');
+				$('#didascalia').text(napoletana[napoletanaIndex].text);
+				$('#traduzione').text(napoletana[napoletanaIndex].translation);
+
+				foo = foo.filter(function(value) {
+					return value != foo[randomIndex];
+				});
+
+                if (foo.length == 0) {
+                    $(this).text('Clicca per resettare');
+                }
+
+                // ANIMATION: RESTART BOLLO
+                $('.sidebarTop').removeClass('action');
+                setTimeout(function() {
+                    $('.sidebarTop').addClass('action');
+                },1000);
+
+                $('#disableExtract').addClass('active');
+                setTimeout(function() {
+                    $('#disableExtract').removeClass("active");
+                }, 4500);
+			}
+		});
+
+		// SWITCH: FUNCTION
+		$('.switch').click(function(){
+			$(this).toggleClass ('on');
+		});
+
+		// SWITCH: RISPARMIO ENERGETICO
+		$('.darkOnButton').click(function(){
+			$('body').toggleClass ('darkOn');
+		});
+
+		// GESTIONE OVERLAY
+		$('.iconClose').click(function(){
+			$('.chiudiPagina').toggleClass('view');
+			$('.chiudiPagina .overlayInner').toggleClass('view');
+		});
+		$('.chiudiPagina').click(function(){
+			$(this).toggleClass('view');
+			$('.chiudiPagina .overlayInner').toggleClass('view');
+		});
+
+
+		$('.openAiuto').click(function(){
+			$('.aiutoPagina').toggleClass('view');
+			$('.aiutoPagina .overlayInner').toggleClass('view');
+		});
+		$('.aiutoPagina').click(function(){
+			$(this).toggleClass('view');
+			$('.aiutoPagina .overlayInner').toggleClass('view');
+		});
+
+		// SWITCH: FUNCTION
+		$('.button').click(function(){
+			$('.spiegaTabellone').addClass ('off');
+		});
+
+	});
+</script>
+</head>
+<body class="tabellone darkOff">
+
+	<div class="iconClose"></div>
+
+	<div class="content">
+		<div class="tabella">
+			<div class="tabellaInner" id="tabellaInner"><div class="cell"><span class="circle" id="id0">1</span></div><div class="cell"><span class="circle" id="id1">2</span></div><div class="cell"><span class="circle" id="id2">3</span></div><div class="cell"><span class="circle" id="id3">4</span></div><div class="cell"><span class="circle" id="id4">5</span></div><div class="cell"><span class="circle" id="id5">6</span></div><div class="cell"><span class="circle" id="id6">7</span></div><div class="cell"><span class="circle" id="id7">8</span></div><div class="cell"><span class="circle" id="id8">9</span></div><div class="cell"><span class="circle" id="id9">10</span></div><div class="cell"><span class="circle" id="id10">11</span></div><div class="cell"><span class="circle" id="id11">12</span></div><div class="cell"><span class="circle" id="id12">13</span></div><div class="cell"><span class="circle" id="id13">14</span></div><div class="cell"><span class="circle" id="id14">15</span></div><div class="cell"><span class="circle" id="id15">16</span></div><div class="cell"><span class="circle" id="id16">17</span></div><div class="cell"><span class="circle" id="id17">18</span></div><div class="cell"><span class="circle" id="id18">19</span></div><div class="cell"><span class="circle" id="id19">20</span></div><div class="cell"><span class="circle" id="id20">21</span></div><div class="cell"><span class="circle" id="id21">22</span></div><div class="cell"><span class="circle" id="id22">23</span></div><div class="cell"><span class="circle" id="id23">24</span></div><div class="cell"><span class="circle" id="id24">25</span></div><div class="cell"><span class="circle" id="id25">26</span></div><div class="cell"><span class="circle" id="id26">27</span></div><div class="cell"><span class="circle" id="id27">28</span></div><div class="cell"><span class="circle" id="id28">29</span></div><div class="cell"><span class="circle" id="id29">30</span></div><div class="cell"><span class="circle" id="id30">31</span></div><div class="cell"><span class="circle" id="id31">32</span></div><div class="cell"><span class="circle" id="id32">33</span></div><div class="cell"><span class="circle" id="id33">34</span></div><div class="cell"><span class="circle" id="id34">35</span></div><div class="cell"><span class="circle" id="id35">36</span></div><div class="cell"><span class="circle" id="id36">37</span></div><div class="cell"><span class="circle" id="id37">38</span></div><div class="cell"><span class="circle" id="id38">39</span></div><div class="cell"><span class="circle" id="id39">40</span></div><div class="cell"><span class="circle" id="id40">41</span></div><div class="cell"><span class="circle" id="id41">42</span></div><div class="cell"><span class="circle" id="id42">43</span></div><div class="cell"><span class="circle" id="id43">44</span></div><div class="cell"><span class="circle" id="id44">45</span></div><div class="cell"><span class="circle" id="id45">46</span></div><div class="cell"><span class="circle" id="id46">47</span></div><div class="cell"><span class="circle" id="id47">48</span></div><div class="cell"><span class="circle" id="id48">49</span></div><div class="cell"><span class="circle" id="id49">50</span></div><div class="cell"><span class="circle" id="id50">51</span></div><div class="cell"><span class="circle" id="id51">52</span></div><div class="cell"><span class="circle" id="id52">53</span></div><div class="cell"><span class="circle" id="id53">54</span></div><div class="cell"><span class="circle" id="id54">55</span></div><div class="cell"><span class="circle" id="id55">56</span></div><div class="cell"><span class="circle" id="id56">57</span></div><div class="cell"><span class="circle" id="id57">58</span></div><div class="cell"><span class="circle" id="id58">59</span></div><div class="cell"><span class="circle" id="id59">60</span></div><div class="cell"><span class="circle" id="id60">61</span></div><div class="cell"><span class="circle" id="id61">62</span></div><div class="cell"><span class="circle" id="id62">63</span></div><div class="cell"><span class="circle" id="id63">64</span></div><div class="cell"><span class="circle" id="id64">65</span></div><div class="cell"><span class="circle" id="id65">66</span></div><div class="cell"><span class="circle" id="id66">67</span></div><div class="cell"><span class="circle" id="id67">68</span></div><div class="cell"><span class="circle" id="id68">69</span></div><div class="cell"><span class="circle" id="id69">70</span></div><div class="cell"><span class="circle" id="id70">71</span></div><div class="cell"><span class="circle" id="id71">72</span></div><div class="cell"><span class="circle" id="id72">73</span></div><div class="cell"><span class="circle" id="id73">74</span></div><div class="cell"><span class="circle" id="id74">75</span></div><div class="cell"><span class="circle" id="id75">76</span></div><div class="cell"><span class="circle" id="id76">77</span></div><div class="cell"><span class="circle" id="id77">78</span></div><div class="cell"><span class="circle" id="id78">79</span></div><div class="cell"><span class="circle" id="id79">80</span></div><div class="cell"><span class="circle" id="id80">81</span></div><div class="cell"><span class="circle" id="id81">82</span></div><div class="cell"><span class="circle" id="id82">83</span></div><div class="cell"><span class="circle" id="id83">84</span></div><div class="cell"><span class="circle" id="id84">85</span></div><div class="cell"><span class="circle" id="id85">86</span></div><div class="cell"><span class="circle" id="id86">87</span></div><div class="cell"><span class="circle" id="id87">88</span></div><div class="cell"><span class="circle" id="id88">89</span></div><div class="cell"><span class="circle" id="id89">90</span></div></div>
+			<!--<img class="pixel" src="img/pixel.png"/>-->
+			<div class="sidebar">
+				<h1 class="logo"><a href="https://tombolagratis.it/">Tombola Gratis Online</a></h1>
+				<div id="extract" class="button">Estrai numero</div>
+				<div id="disableExtract" class="button">Attendi ...</div>
+				<div class="sidebarTop">
+					<div id="number"></div>
+					<div class="baloon">
+						<p id="didascalia"></p>
+						<p id="traduzione"></p>
+					</div>
+					<p class="spiegaTabellone">
+						Invita i tuoi amici a creare una nuova cartella su <span class="blue">TombolaGratis.it</span> da PC, Tablet o dal Telefono. Estrai e buon divertimento!
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="palette">
+		<span class="a"></span>
+		<span class="b"></span>
+		<span class="c"></span>
+		<span class="d"></span>
+	</div>
+
+	<div class="fakeSpace">
+	</div>
+
+	<div class="footerFixed">
+		<div class="optionWrapper">
+			<div class="option01">
+				<div class="switch darkOnButton">
+					<svg width="24px" height="29px" viewBox="0 0 24 29" version="1.1" class="lightIcon">
+						<path d="M4.73825061,15.0962632 C5.51801753,16.8208732 8.65406768,19.9123269 8.65406768,21.1931868 C8.65406768,21.6084216 8.51664927,26.7657372 9.06836353,27.0835856 C9.242822,27.1840929 9.96419017,27.2561658 10.6084876,27.30046 C11.064341,27.331799 11.618141,28.163942 12.1479758,28.1677021 C12.6749314,28.1714418 13.177883,27.3469469 13.6462263,27.3238649 C14.4616539,27.283677 15.091664,27.3238645 15.3334363,27.0835856 C15.6345847,26.7842973 15.7079945,21.193187 15.7079945,21.193187 C15.5396529,19.6453246 19.1404504,16.5571584 19.8573987,14.7149579 C20.1957866,13.8454691 20.3809524,12.9030419 20.3809524,11.9186628 C20.3809524,7.54530609 16.726134,4 12.2176871,4 C7.70924014,4 4.05442177,7.54530609 4.05442177,11.9186628 C4.05442177,13.0487865 4.2984769,14.123616 4.73825061,15.0962632 Z" id="lampadina" stroke="#7E6755" fill="transparent" stroke-width="2" sketch:type="MSShapeGroup"></path>
+						<g id="oval" fill="#7E6655" sketch:type="MSShapeGroup">
+							<circle id="oval01" cx="4" cy="20" r="1"></circle>
+							<circle id="oval02" cx="1" cy="15" r="1"></circle>
+							<circle id="oval03" cx="1" cy="9" r="1"></circle>
+							<circle id="oval04" cx="4" cy="4" r="1"></circle>
+							<circle id="oval05" cx="9" cy="1" r="1"></circle>
+							<circle id="oval06" cx="15" cy="1" r="1"></circle>
+							<circle id="oval07" cx="20" cy="4" r="1"></circle>
+							<circle id="oval08" cx="23" cy="9" r="1"></circle>
+							<circle id="oval09" cx="23" cy="14" r="1"></circle>
+							<circle id="oval10" cx="20" cy="20" r="1"></circle>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<div class="option02">
+				<div class="openAiuto">AIUTO ?</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="overlay chiudiPagina">
+		<div class="overlayInner">
+			<h4>Vuoi uscire dalla<b> partita in corso?</b></h4><b>
+			<a href="https://tombolagratis.it/">Si</a>
+			<a href="https://tombolagratis.it/tabellone#" class="nonUscire">No</a>
+		</b></div><b>
+	</b></div><b>
+
+	<div class="overlay aiutoPagina">
+		<div class="overlayInner text">
+			<div class="iconCloseText"></div>
+			<h4>Come funziona<br> Tombola Gratis.it</h4>
+			<p>
+				Un giocatore, a scelta tra di voi, aprirà il <strong>Tabellone</strong>, estrarrà i numeri tramite il bottone arancione -Estrai numero- e come in una classica <strong>Tombola</strong> annuncerà il numero estratto in modo da permettere a tutti i partecipanti di marcare il numero sulle loro cartelle. Inoltre il <strong>tabellone della Tombola</strong> suggerirà un’associazione tra numeri e significati, classico della <strong>Tombola napoletana</strong>.
+				<br>
+				Tutti gli altri giocatori presenti sceglieranno, prima di tutto, con quante <strong>Cartelle</strong> partecipare, in seguito ad ogni numero estratto dal tabellone, selezioneranno la casella corrispondente ai numeri se presenti. Le caselle verranno marcate con il fagiolo, legume spesso utilizzato come segna numero nella <strong>Tombola</strong> classica.
+			</p>
+		</div>
+	</div>
+
+    <!--  Google Analytics  -->
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-71203831-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+</b></body></html>

@@ -1,0 +1,21 @@
+<h2>Nuova Partita</h2>
+<form [formGroup]="sessioneForm" (ngSubmit)="createSession()">
+    <div class="form-group">
+        <label for="username">Costo Cartella</label>
+        <input type="text" formControlName="costoCartella" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.costoCartella.errors }" />
+        <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+            <div *ngIf="f.username.errors.required">Costo Cartella is required</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Crea
+        </button>
+    </div>
+</form>
+<ul>
+  <li *ngFor="let session of sessions">
+      {{session.stato}}: Partita {{session.id}} del {{session.createdAt}} ({{session.costoCartella}} &euro;)- <a [routerLink]="[getCartelleLink(session), session.id]">Vai</a>
+  </li>
+</ul>

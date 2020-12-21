@@ -1,0 +1,33 @@
+<table table width="1440px">
+  <tr>
+    <td valign="top">
+      &nbsp;
+      <table width="100%" style="border: 1px solid black;">
+        <tr *ngFor="let riga of cartellone; let r = index;" height="40">
+          <td align="center" width="40" [attr.bgcolor]="(newClose[r][0] ? 'gold' : 'white')">
+            <span *ngIf="closeNumbers[r][0] > 0">{{closeNumbers[r][0]}}</span>
+          </td>
+          <td class="circle" width="40" [attr.id]="'id'+colonna.number" *ngFor="let colonna of riga; let c = index" nowrap="nowrap" align="center" style="border: 1px solid black;">
+            {{colonna.number}}
+          </td>
+          <td align="center" width="40" [attr.bgcolor]="(newClose[r][1] ? 'gold' : 'white')">
+            <span *ngIf="closeNumbers[r][1] > 0">{{closeNumbers[r][1]}}</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <div class="">
+        <div id="extract" class="button" (click)="extract()">{{testoBottone}}</div>
+        <!--<div id="disableExtract" class="button">Attendi ...</div>-->
+        <div class="">
+          <div id="number">{{numero.number}}</div>
+          <div class="">
+            <p id="didascalia">{{numero.text}}</p>
+            <p id="traduzione">{{numero.translation}}</p>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
