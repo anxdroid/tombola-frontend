@@ -8,12 +8,15 @@ import { Estrazione } from '../_models/estrazione';
 import { Numero } from '../_models/numero';
 import { Sessione } from '../_models/sessione';
 import { AuthenticationService, AlertService } from '../_services';
+import { ChatService } from '../_services/chat.service';
 import { TombolaService } from '../_services/tombola.service';
+import { WebSocketService } from '../_services/websocket.service';
 
 @Component({
   selector: 'app-cartelle',
   templateUrl: './cartelle.component.html',
-  styleUrls: ['./cartelle.component.css']
+  styleUrls: ['./cartelle.component.css'],
+  providers: [WebSocketService, ChatService]
 })
 export class CartelleComponent implements OnInit {
   [x: string]: any;
@@ -123,15 +126,14 @@ export class CartelleComponent implements OnInit {
   cartelle: Cartella[] = [];
   estratti: Estrazione[] = [];
 
-  myWebSocket: WebSocketSubject<string> = webSocket('ws://localhost:1337');
-
   constructor(
     private formBuilder: FormBuilder,
     private el: ElementRef,
     private tombolaService: TombolaService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private chatService: ChatService) {
     this.currentUser = this.authenticationService.currentUserValue;
   }
 
@@ -201,33 +203,6 @@ export class CartelleComponent implements OnInit {
       items.push(i);
     }
     return items;
-  }
-
-  public check(): void {
-    for (let r = 0; r < 11; r++) {
-      let count = 0;
-      for (let c = 0; c < 11; c++) {
-        if (c == 5) {
-          /*
-          this.closeNumbers[r][0] = count;
-          this.newClose[r][0] = (this.closeNumbers[r][0] > this.closeNumbersOld[r][0]);
-          this.closeNumbersOld[r][0] = count;
-          */
-          count = 0;
-        }
-        /*
-        let number = this.cartellone[r][c];
-        if (number.issued) {
-          count++;
-        }
-        */
-      }
-      /*
-      this.closeNumbers[r][1] = count;
-      this.newClose[r][1] = (this.closeNumbers[r][1] > this.closeNumbersOld[r][1]);
-      this.closeNumbersOld[r][1] = count;
-      */
-    }
   }
 
   public selectNumber(numero:Numero): void {
@@ -321,12 +296,18 @@ export class CartelleComponent implements OnInit {
       //console.log(params);
       this.sessionId = params['sessionId'];
       //console.log(this.sessionId);
-      this.resume();
-
-      this.myWebSocket.asObservable().subscribe(dataFromServer => {
-        console.log(dataFromServer);
+      
+      this.chatService.messages.subscribe(msg => {
+        console.log("Response from websocket: " + msg);
+        this.chatService.messages.next("Ciao !");
       });
+
+      
+      
+      this.resume();
     });
   }
 
 }
+
+// https://www.universonline.it/_tempo_libero/sogni/smorfia-napoletana/img/1-smorfia-napoletana.jpg

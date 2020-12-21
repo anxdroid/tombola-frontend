@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   //apiUrl: 'http://192.168.1.3:4000'
   apiUrl: 'http://localhost:4000',
-  wsUrl: 'ws://localhost:1337'
+  wsUrl: 'ws://localhost:1337',
+  wsReconnectInterval: 2
 };
 
 /*
