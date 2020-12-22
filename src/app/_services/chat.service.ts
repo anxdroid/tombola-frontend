@@ -2,6 +2,7 @@ import { Inject, Injectable, Optional } from "@angular/core";
 import { Subject } from "rxjs";
 import { map } from 'rxjs/operators';
 import { environment } from "src/environments/environment";
+import { Messaggio } from "../_models/messaggio";
 import { WebSocketService } from "./websocket.service";
 
 export interface Message {
@@ -13,7 +14,7 @@ export interface Message {
 export class ChatService {
   public sessionId = 0;
   public wsService!: WebSocketService;
-  public connection: any;
+  public connections: any[] = [];
 
   constructor(wsService: WebSocketService) {
     this.wsService = wsService;
@@ -21,17 +22,14 @@ export class ChatService {
 
   public start(sessionId:number) {
     this.sessionId = sessionId;
-    return <Subject<string>>this.wsService.connect(environment.wsUrl+"/"+this.sessionId).pipe(map(
+    let connection = <Subject<string>>this.wsService.connect(environment.wsUrl+"/"+this.sessionId).pipe(map(
       (response: MessageEvent): string => {
-        console.log(response);
+        //console.log(response);
         return response.data;
       }
     )
     );
-  }
-
-  public send(message:string) {
-    console.log("Sending "+message)
-    this.connection.next(message);
+    this.connections.push(connection);
+    return connection;
   }
 }

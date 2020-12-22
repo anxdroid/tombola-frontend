@@ -5,6 +5,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { User } from '../_models';
 import { Cartella } from '../_models/cartella';
 import { Estrazione } from '../_models/estrazione';
+import { Messaggio } from '../_models/messaggio';
 import { Numero } from '../_models/numero';
 import { Sessione } from '../_models/sessione';
 import { AuthenticationService, AlertService } from '../_services';
@@ -293,10 +294,14 @@ export class CartelleComponent implements OnInit {
     }
   }
 
-
-
   public receive(message: string): void {
-      console.log(message);
+      let msg = JSON.parse(message);
+      if (msg.command == "extract") {
+        let numero = this.numeri[+msg.payload-1];
+        this.estratti.push(new Estrazione(msg.sessionId, msg.userId, +msg.payload));
+        this.selectNumber(numero);
+      }
+      console.log(msg);
   }
 
   ngOnInit(): void {
@@ -305,7 +310,7 @@ export class CartelleComponent implements OnInit {
       this.sessionId = params['sessionId'];
       //console.log(this.sessionId);
       this.connection = this.chatService.start(this.sessionId);
-      this.connection.subscribe(this.receive);
+      this.connection.subscribe((msg: string) => {this.receive(msg)});
 
       this.resume();
     });
