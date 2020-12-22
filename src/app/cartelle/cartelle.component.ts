@@ -150,7 +150,7 @@ export class CartelleComponent implements OnInit {
         data => {
           cartella.id = data.id;
           cartella.risultatiArray = [];
-          console.log("saved", cartella);
+          //console.log("saved", cartella);
           this.savedCount++;
         },
         error => {
@@ -174,6 +174,7 @@ export class CartelleComponent implements OnInit {
     this.cartelle = [];
     for (let ca = 0; ca < +this.numeroCartelle; ca++) {
       let cartella = new Cartella(this.sessionId, this.currentUser.id);
+      cartella.risultatiArray = [];
       for (let r = 0; r < 3; r++) {
         cartella.risultatiArray.push(0);
         let riga: Numero[] = [];
@@ -191,7 +192,7 @@ export class CartelleComponent implements OnInit {
         for (let i in indici) {
           if (this.numeri[+indici[i] - 1] !== undefined) {
             riga.push(this.numeri[+indici[i] - 1]);
-            this.numeri[+indici[i]].cartelle.push(ca);
+            this.numeri[+indici[i] - 1].cartelle.push(ca);
           }
         }
         //console.log(riga);
@@ -212,17 +213,17 @@ export class CartelleComponent implements OnInit {
     return items;
   }
 
-  public selectNumber(numero: Numero, nuovoNumero: boolean): void {
-    //console.log(numero);
+  public selectNumber(numero: Numero): void {
+    //console.log("selecting "+numero, numero.cartelle);
     for (let ca of numero.cartelle) {
       let cartella = this.cartelle[ca];
-      //console.log(cartella);
+      console.log(cartella);
       for (let r in cartella.indici) {
         let riga = cartella.indici[r];
         for (let c in riga) {
           let n = riga[c];
           //console.log(numero.number, n);
-          if (+numero.number == +n) {
+          if (+(numero.number) == +n) {
             //console.log(numero.number, n);
             //let id = 'id'+ca+'x'+r+'x'+c;
             //console.log(n, id);
@@ -238,8 +239,8 @@ export class CartelleComponent implements OnInit {
     let ultimoRisultato = 0;
     for (let cartella of this.cartelle) {
       let risultatoCartella: number = 0;
-      cartella.risultatiArray = [];
       cartella.seq = this.lastSeq;
+      cartella.risultatiArray = [];
       for (let riga of cartella.numeri) {
         let risultatoRiga = 0;
         for (let numero of riga) {
@@ -261,7 +262,7 @@ export class CartelleComponent implements OnInit {
         //console.log("Trovati "+risultatoRiga+" numeri vicini !");
         this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
           data => {
-            console.log("saved...", cartella)
+            //console.log("saved...", cartella)
             //console.log(cartella, data);
           },
           error => {
@@ -303,8 +304,6 @@ export class CartelleComponent implements OnInit {
                     numero.cartelle.push(+caI);
                     numero.row = +rI;
                     numero.column = +cI;
-                    //this.selectNumber(+caI, numero);
-
                     //console.log(numero);
                     riga.push(numero);
                   }
@@ -327,7 +326,7 @@ export class CartelleComponent implements OnInit {
                     }
                     let numero = this.numeri[+estratto.number - 1];
                     if (numero.cartelle.length > 0) {
-                      this.selectNumber(numero, false);
+                      this.selectNumber(numero);
                       this.check(false);
                     }
                   }
@@ -366,18 +365,30 @@ export class CartelleComponent implements OnInit {
   public receive(message: Messaggio): void {
     //console.log(message.userId, this.currentUser.id);
     if (+message.userId != +this.currentUser.id) {
-      //console.log(message);
-      if (message.command == "extract") {
-        let payload = JSON.parse(message.payload);
-        let numero = this.numeri[+payload.number - 1];
-        if (+payload.seq > this.lastSeq) {
-          this.lastSeq = +payload.seq;
-          console.log("New seq:" + this.lastSeq);
-        }
-        this.estratti.push(new Estrazione(message.sessionId, message.userId, +payload.number));
-        this.selectNumber(numero, true);
-        this.check(true);
-      }
+      /*
+      this.tombolaService.getSession(this.sessionId).subscribe(
+        session => {
+          this.session = session;
+      */
+          //console.log(message);
+          if (message.command == "extract") {
+            let payload = JSON.parse(message.payload);
+            let numero = this.numeri[+payload.number - 1];
+            if (+payload.seq > this.lastSeq) {
+              this.lastSeq = +payload.seq;
+              this.session.ultimoSeq = this.lastSeq;
+              console.log("New seq:" + this.lastSeq);
+            }
+            this.estratti.push(new Estrazione(message.sessionId, message.userId, +payload.number));
+            this.selectNumber(numero);
+            this.check(true);
+          }
+        /*
+        },
+        error => {
+          this.alertService.error(error);
+        });
+        */
     }
     //console.log(msg);
   }
