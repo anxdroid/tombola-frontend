@@ -16,7 +16,7 @@ import { WebSocketService } from '../_services/websocket.service';
 @Component({
   selector: 'app-cartelle',
   templateUrl: './cartelle.component.html',
-  styleUrls: ['./cartelle.component.css'],
+  styleUrls: ['./cartelle.component.less'],
   providers: [WebSocketService, ChatService]
 })
 export class CartelleComponent implements OnInit {

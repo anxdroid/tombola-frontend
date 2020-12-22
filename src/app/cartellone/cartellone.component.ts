@@ -12,7 +12,7 @@ import { TombolaService } from '../_services/tombola.service';
 @Component({
   selector: 'app-cartellone',
   templateUrl: './cartellone.component.html',
-  styleUrls: ['./cartellone.component.css']
+  styleUrls: ['./cartellone.component.less']
 })
 export class CartelloneComponent implements OnInit {
 

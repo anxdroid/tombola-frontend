@@ -9,7 +9,7 @@ import { TombolaService } from '../_services/tombola.service';
 @Component({
   selector: 'app-sessione',
   templateUrl: './sessione.component.html',
-  styleUrls: ['./sessione.component.css']
+  styleUrls: ['./sessione.component.less']
 })
 export class SessioneComponent implements OnInit {
   currentUser: User;
