@@ -126,6 +126,8 @@ export class CartelleComponent implements OnInit {
   cartelle: Cartella[] = [];
   estratti: Estrazione[] = [];
 
+  connection: any;
+
   constructor(
     private formBuilder: FormBuilder,
     private el: ElementRef,
@@ -291,19 +293,20 @@ export class CartelleComponent implements OnInit {
     }
   }
 
+
+
+  public receive(message: string): void {
+      console.log(message);
+  }
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       //console.log(params);
       this.sessionId = params['sessionId'];
       //console.log(this.sessionId);
-      
-      this.chatService.messages.subscribe(msg => {
-        console.log("Response from websocket: " + msg);
-        this.chatService.messages.next("Ciao !");
-      });
+      this.connection = this.chatService.start(this.sessionId);
+      this.connection.subscribe(this.receive);
 
-      
-      
       this.resume();
     });
   }

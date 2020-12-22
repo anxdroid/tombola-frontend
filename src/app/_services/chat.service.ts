@@ -1,10 +1,8 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable, Optional } from "@angular/core";
 import { Subject } from "rxjs";
 import { map } from 'rxjs/operators';
 import { environment } from "src/environments/environment";
 import { WebSocketService } from "./websocket.service";
-
-const CHAT_URL = environment.wsUrl;
 
 export interface Message {
   author: string;
@@ -13,14 +11,27 @@ export interface Message {
 
 @Injectable()
 export class ChatService {
-  public messages: Subject<string>;
+  public sessionId = 0;
+  public wsService!: WebSocketService;
+  public connection: any;
 
   constructor(wsService: WebSocketService) {
-    this.messages = <Subject<string>>wsService.connect(CHAT_URL).pipe(map(
+    this.wsService = wsService;
+  }
+
+  public start(sessionId:number) {
+    this.sessionId = sessionId;
+    return <Subject<string>>this.wsService.connect(environment.wsUrl+"/"+this.sessionId).pipe(map(
       (response: MessageEvent): string => {
         console.log(response);
         return response.data;
       }
-    ));
+    )
+    );
+  }
+
+  public send(message:string) {
+    console.log("Sending "+message)
+    this.connection.next(message);
   }
 }
