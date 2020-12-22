@@ -39,6 +39,10 @@
           <div class="col" *ngFor="let cartella of cartelle; let ca = index">
             <table width="100%" style="border: 1px solid black;">
               <tr *ngFor="let r of createRange(3)">
+                <td align="center" width="40"
+                  style="border: 1px solid black;">
+                  {{(cartella.risultatiArray[r] > 0) ? cartella.risultatiArray[r] : ''}}
+                </td>
                 <td [attr.id]="'id'+ca+'x'+r+'x'+c" width="20%" *ngFor="let c of createRange(5)" align="center"
                   style="border: 1px solid black;"
                   [ngStyle]="cartella.numeri[r][c].issued?{'background-color':'gold'} : {'background-color': 'white'}">

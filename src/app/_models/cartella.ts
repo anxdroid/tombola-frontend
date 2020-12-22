@@ -12,6 +12,9 @@ export class Cartella {
   uuid: string = "";
   id: Number = 0;
   righe: string = "";
+  risultati: string = "";
+  risultatiArray: number[] = [];
+
   constructor(sessionId:Number, userId: Number) {
     this.sessionId = sessionId;
     this.userId = userId;
