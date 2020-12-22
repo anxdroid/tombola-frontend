@@ -289,7 +289,7 @@ export class CartelleComponent implements OnInit {
               for (let caI in cartelle) {
                 let cartella = cartelle[caI];
                 //console.log(cartella);
-                cartella.risultatiArray = JSON.parse(cartella.risultati);
+                cartella.risultatiArray = [];
                 cartella.indici = JSON.parse(cartella.righe);
                 cartella.numeri = [];
 
@@ -314,6 +314,7 @@ export class CartelleComponent implements OnInit {
                 this.savedCount++;
                 this.numeroCartelle++;
               }
+
               this.tombolaService.resumeSession(this.sessionId).subscribe(
                 estratti => {
                   //console.log(data);
@@ -327,6 +328,7 @@ export class CartelleComponent implements OnInit {
                     let numero = this.numeri[+estratto.number - 1];
                     if (numero.cartelle.length > 0) {
                       this.selectNumber(numero, false);
+                      this.check(false);
                     }
                   }
 
@@ -334,15 +336,16 @@ export class CartelleComponent implements OnInit {
                     console.log("syncing...", cartella);
                     if (cartella.seq != this.lastSeq) {
                       cartella.seq = this.lastSeq;
-                      this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
-                        data => {
-                          console.log("sync'd...", data);
-                        },
-                        error => {
-                          console.log(error);
-                          this.alertService.error(error);
-                        });
                     }
+                    this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
+                      data => {
+                        console.log("sync'd...", data);
+                      },
+                      error => {
+                        console.log(error);
+                        this.alertService.error(error);
+                      });
+
                   }
                 },
                 error => {
