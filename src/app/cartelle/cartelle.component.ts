@@ -174,6 +174,7 @@ export class CartelleComponent implements OnInit {
     for (let ca = 0; ca < +this.numeroCartelle; ca++) {
       let cartella = new Cartella(this.sessionId, this.currentUser.id);
       for (let r = 0; r < 3; r++) {
+        cartella.risultatiArray.push(0);
         let riga: Numero[] = [];
         let indici: number[] = [];
         for (let c = 0; c < 5; c++) {
@@ -223,10 +224,27 @@ export class CartelleComponent implements OnInit {
             //let id = 'id'+ca+'x'+r+'x'+c;
             //console.log(n, id);
             cartella.numeri[r][c].issued = true;
+            this.check();
           }
 
         }
       }
+    }
+  }
+
+  public check(): void {
+    for(let cartella of this.cartelle) {
+      cartella.risultatiArray = [];
+      for(let riga of cartella.numeri) {
+        let risultatoRiga = 0;
+        for (let numero of riga) {
+          if (numero.issued) {
+            risultatoRiga++;
+          }
+        }
+        cartella.risultatiArray.push(risultatoRiga);
+      }
+      cartella.risultati = JSON.stringify(cartella.risultatiArray);
     }
   }
 
@@ -247,10 +265,12 @@ export class CartelleComponent implements OnInit {
           this.cartelle = [];
           for (let caI in data) {
             let cartella = data[caI];
+            cartella.risultatiArray = JSON.parse(cartella.risultati);
             cartella.indici = JSON.parse(cartella.righe);
             cartella.numeri = [];
 
             for (let rI in cartella.indici) {
+              cartella.risultatiArray.push();
               let rigaIndici = cartella.indici[rI];
               let riga: Numero[] = [];
               for (let cI in rigaIndici) {
