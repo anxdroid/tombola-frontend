@@ -15,13 +15,13 @@ export class TombolaService {
   }
 
   extract(estrazione: Estrazione) {
-    console.log(estrazione);
+    //console.log(estrazione);
     return this.http.post(`${environment.apiUrl}/tombola/extract`, estrazione);
   }
 
-  newSession(sessione: Sessione) {
-    console.log(sessione);
-    return this.http.post<Sessione>(`${environment.apiUrl}/tombola/new`, sessione);
+  saveSession(sessione: Sessione) {
+    //console.log("Sending", sessione);
+    return this.http.post<Sessione>(`${environment.apiUrl}/tombola/saveSession`, sessione);
   }
 
   listSessions() {

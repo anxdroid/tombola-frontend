@@ -5,6 +5,6 @@ export class Messaggio {
   sessionId: Number = 0;
   userId: Number = 0;
   command: string = '';
-  payload: string = '';
+  payload: any = '';
   date: Date = new Date();
 }

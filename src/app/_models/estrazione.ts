@@ -5,6 +5,7 @@ export class Estrazione {
   sessionId: Number = 0;
   userId: Number = 0;
   number: Number = 0;
+  seq: number = -1;
   constructor(sessionId:Number, userId: Number, number: Number) {
     this.sessionId = sessionId;
     this.userId = userId;

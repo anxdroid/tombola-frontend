@@ -50,7 +50,7 @@ export class SessioneComponent implements OnInit {
   }
 
   createSession() {
-    this.tombolaService.newSession(new Sessione(this.currentUser.id, this.f.costoCartella.value))
+    this.tombolaService.saveSession(new Sessione(this.currentUser.id, this.f.costoCartella.value))
       .subscribe(
         data => {
           //console.log(data)

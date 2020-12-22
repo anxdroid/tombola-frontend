@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
         const currentUser = this.authenticationService.currentUserValue;
         if (currentUser.token != '') {
             // authorised so return true
-            console.log("Authorized !", currentUser)
+            //console.log("Authorized !", currentUser)
             return true;
         }
 

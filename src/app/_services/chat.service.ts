@@ -12,7 +12,6 @@ export interface Message {
 
 @Injectable()
 export class ChatService {
-  public sessionId = 0;
   public wsService!: WebSocketService;
   public connections: any[] = [];
 
@@ -20,12 +19,11 @@ export class ChatService {
     this.wsService = wsService;
   }
 
-  public start(sessionId:number) {
-    this.sessionId = sessionId;
-    let connection = <Subject<string>>this.wsService.connect(environment.wsUrl+"/"+this.sessionId).pipe(map(
-      (response: MessageEvent): string => {
+  public start(sessionId:number, userId: number) {
+    let connection = <Subject<Messaggio>>this.wsService.connect(environment.wsUrl+"/"+sessionId+"/"+userId).pipe(map(
+      (response: MessageEvent): Messaggio => {
         //console.log(response);
-        return response.data;
+        return JSON.parse(response.data);
       }
     )
     );
