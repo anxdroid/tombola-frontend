@@ -121,6 +121,7 @@ export class CartelloneComponent implements OnInit {
   //myWebSocket: WebSocketSubject<string> = webSocket('ws://localhost:1337');
 
   testoBottone: string = "Estrai";
+  waiting: boolean = false;
   numero: Numero = { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "", "text": "", "translation": "" };
   currentUser: User;
 
@@ -178,9 +179,14 @@ export class CartelloneComponent implements OnInit {
   }
 
   public receive(message: Messaggio): void {
-    if (message.userId != 0 && message.userId != this.currentUser.id) {
-      this.lastMessage = message;
-      //console.log(this.lastMessage)
+    if (+message.userId != +this.currentUser.id) {
+      if (message.command == "notifySyncStatus") {
+        //console.log(message);
+        if (message.payload.sync == 100 && message.payload.seq == this.session.ultimoSeq) {
+          console.log("All in sync ! Move on !");
+          this.waiting = false;
+        }
+      }
     }
   }
 
@@ -231,6 +237,7 @@ export class CartelloneComponent implements OnInit {
             this.session.ultimoSeq++;
             //console.log("Sending", this.session);
 
+            this.waiting = true;
             this.tombolaService.saveSession(this.session)
               .subscribe(
                 data => {
