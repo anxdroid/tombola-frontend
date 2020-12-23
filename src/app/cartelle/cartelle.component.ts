@@ -133,10 +133,12 @@ export class CartelleComponent implements OnInit {
   numeroCartelle: number = 0;
   cartelle: Cartella[] = [];
   estratti: Estrazione[] = [];
-  lastMessage:string = "";
+  lastMessage: string = "";
 
   connection: any;
   lastSeq: number = -1;
+
+  owner: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -183,6 +185,41 @@ export class CartelleComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  // genera il cartellone
+  public setCartellone(): void {
+    this.numeroCartelle = 6;
+    //console.log(this.numeroCartelle);
+    this.cartelle = [];
+    let increment = -30;
+    for (let ca = 0; ca < this.numeroCartelle; ca++) {
+      if (ca % 2 == 0) {
+        increment += 30;
+      }
+      let primoNumero = ((ca % 2) * 5) + 1 + increment;
+
+      let cartella = new Cartella(this.sessionId, this.currentUser.id);
+      cartella.risultatiArray = [];
+      for (let r = 0; r < 3; r++) {
+        let primoNumeroRiga = primoNumero + (10 * r);
+        cartella.risultatiArray.push(0);
+        let riga: Numero[] = [];
+        let indici: number[] = [];
+        for (let c = 0; c < 5; c++) {
+          let randomNumber = primoNumeroRiga + c;
+          console.log(ca, randomNumber);
+          indici.push(+randomNumber);
+          this.numeri[+randomNumber - 1].cartelle.push(ca);
+          riga.push(this.numeri[+randomNumber - 1]);
+        }
+        cartella.numeri.push(riga);
+        cartella.indici.push(indici);
+
+      }
+      this.cartelle.push(cartella);
+    }
+    console.log("setCartelle", this.cartelle);
   }
 
   // genera le cartelle
@@ -383,7 +420,7 @@ export class CartelleComponent implements OnInit {
       }
 
       if (message.command == "notifyWinner") {
-        this.lastMessage = "L'utente "+message.payload.winner+" ha fatto "+this.premi[+message.payload.result]+"!";
+        this.lastMessage = "L'utente " + message.payload.winner + " ha fatto " + this.premi[+message.payload.result] + "!";
       }
     }
   }
@@ -408,11 +445,25 @@ export class CartelleComponent implements OnInit {
       this.connection = this.chatService.start(this.sessionId, this.currentUser.id);
       this.connection.subscribe((msg: Messaggio) => { this.receive(msg) });
 
-      // resume dei dati da backend
-      this.resume();
+      this.tombolaService.getSession(this.sessionId).subscribe(
+        session => {
+          this.session = session;
+          // resume dei dati da backend
+          if (this.session.userId != this.currentUser.id) {
+            this.resume();
+          } else {
+            this.owner = true;
+            console.log("Owner !");
+            if (this.session.stato == 0) {
+              this.setCartellone();
+            }
+          }
+        },
+        error => {
+          this.alertService.error(error);
+        }
+      );
     });
   }
-
 }
-
 // https://www.universonline.it/_tempo_libero/sogni/smorfia-napoletana/img/1-smorfia-napoletana.jpg

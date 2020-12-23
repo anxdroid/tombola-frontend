@@ -3,7 +3,7 @@
     (totale: {{+session.costoCartella * numeroCartelle}} &euro;)
   </span>
 </h2>
-<span *ngIf="session != null && session.stato == 0 && savedCount == 0">
+<span *ngIf="session != null && session.stato == 0 && savedCount == 0 && !owner">
   <form [formGroup]="cartelleForm" (ngSubmit)="setCartelle()">
     <div class="form-group">
       <label for="numeroCartelle">Numero Cartelle</label>
