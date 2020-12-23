@@ -1,74 +1,13 @@
 @import url(https://fonts.googleapis.com/css2?family=Lato&display=swap);
 
 
-/* ==== NO SELECT ==== */
-.tabella,
-.button,
-.cartella-wrapper {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
 /* ==== FONT RENDERING OSX ==== */
 * {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ==== TRANSITION ==== */
-.switch:before,
-.cartella-wrapper,
-td,
-table,
-.cartelle td:before,
-.cartelle span,
-#traduzione,
-#didascalia,
-#number,
-.circle,
-.overlayInner,
-#oval circle,
-#disableExtract,
-.footerFixed,
-.spiegaTabellone,
-.home .button:before,
-.home .button:after {
-  -moz-transition: all 500ms;
-  -webkit-transition: all 500ms;
-  transition: all 500ms;
-}
-
-p,
-.sidebar,
-body,
-.cartella-wrapper {
-  -moz-transition: background 500ms;
-  -webkit-transition: background 500ms;
-  transition: background 500ms;
-}
-
-.overlay {
-  -moz-transition: opacity 500ms;
-  -webkit-transition: opacity 500ms;
-  transition: opacity 500ms;
-}
-
-/* ==== MIXINS ==== */
-.MakeRandom(@min: 0, @max: @min+1, @int: 0) {
-    .checkInt() {
-        @getNum: `Math.random() * (@{max} - @{min} + @{int})`;
-        @base: unit(`@{int} == 1 ? Math.floor(@{getNum}) : @{getNum}`);
-    }
-    .checkInt();
-    @randNum: @base + @min;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* ==== COLORS ==== */
-
 @color1: #C54E47;
 
 @color2: #A33B35;
@@ -81,11 +20,38 @@ body,
 
 @color6: #CEB029;
 
-@text-secondary: #ccc;
+@primary: #fff;
 
-@text-primary: #fff;
+@secondary: #ccc;
 
-@text-inverse: #222;
+@inverse: #222;
+
+
+/* ==== TEXT STYLES ==== */
+.text-danger {
+    color: @color1;
+}
+
+.text-highlight {
+    color: @color5;
+}
+
+.text-secondary {
+    color: @secondary;
+}
+
+
+/* ==== FONT SIZES ==== */
+@text-small: 12px;
+
+@text-medium: 15px;
+
+@text-large: 18px;
+
+@text-xlarge: 26px;
+
+@text-xxlarge: 80px;
+
 
 /* ==== SIZES ==== */
 @size-xsmall: 26px;
@@ -102,18 +68,6 @@ body,
 
 @spacing-large: 50px;
 
-/* ==== FONT SIZES ==== */
-
-@text-small: 12px;
-
-@text-medium: 15px;
-
-@text-large: 18px;
-
-@text-xlarge: 26px;
-
-@text-xxlarge: 80px;
-
 
 /* ==== SHADOWS ==== */
 @shadow-small: 0px 1px 8px 0 rgba(0, 0, 0, 0.3);
@@ -126,7 +80,7 @@ body,
     background-size: cover;
     background-position: bottom;
     font-family: 'Lato', sans-serif;
-    color: @text-primary;
+    color: @primary;
 }
 
 a {
@@ -167,47 +121,14 @@ p {
   font-weight: 500;
 }
 
-.text-danger {
-    color: @color1;
-}
-
-.text-highlight {
-    color: @color5;
-}
-
 hr {
-    border-top: 1px solid #fff;
+    border-top: 1px solid ;
     margin: @spacing-large 0;
-}
-
-.form-control:focus {
-    color: #495057;
-    border-color: @color3;
-    box-shadow: 0 0 0 0.2rem fade(@color3, 20%);
-}
-
-form label {
-    text-transform: uppercase;
-    font-size: @text-small;
-    letter-spacing: 1px;
-}
-
-.form-group.d-flex {
-    .button {
-        flex-grow: 1;
-        flex-basis: 50%;
-        &:not(:first-child) {
-            margin-left: @spacing-small;
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-        }
-    }
 }
 
 .button {
     background-color: @color1;
-    color: @text-primary;
+    color: @primary;
     border: 1px solid transparent;
     cursor: pointer;
     display: inline-flex;
@@ -232,14 +153,14 @@ form label {
     }
     &.button-link {
         background-color: transparent;
-        border: 1px solid @text-primary;
-        color: @text-primary;
+        border: 1px solid @primary;
+        color: @primary;
         box-shadow: none;
         text-transform: none;
         font-size: @text-medium;
         &:hover {
             background-color: #fff;
-            color: @text-inverse;
+            color: @primary;
         }
     }
     &.button-small {
@@ -266,6 +187,36 @@ form label {
     z-index: 20;
   }
 
+
+/* ==== FORM ELEMENTS ==== */
+
+.form-control:focus {
+    color: #495057;
+    border-color: @color3;
+    box-shadow: 0 0 0 0.2rem fade(@color3, 20%);
+}
+
+form label {
+    text-transform: uppercase;
+    font-size: @text-small;
+    letter-spacing: 1px;
+}
+
+.form-group.d-flex {
+    .button {
+        flex-grow: 1;
+        flex-basis: 50%;
+        &:not(:first-child) {
+            margin-left: @spacing-small;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+        }
+    }
+}
+
+/* ==== SECTIONS ==== */
+
 .intro {
     width: 500px;
     min-height: calc(~"100vh - "@size-medium);
@@ -278,131 +229,7 @@ form label {
     background-color: #fff;
     max-height: 290px;
     overflow: auto;
-    color: @text-inverse;
+    color: @inverse;
     border-radius: 10px;
     padding: @spacing-medium;
 }
-
-
-/* ==== PAGE: CARTELLE ==== */
-#cartelle {
-  margin-bottom: 120px;
-}
-
-.cartelle .logo {
-  width: 110px;
-  height: 84px;
-  display: block;
-  margin: 40px auto 40px;
-}
-
-.cartelle .cartella-wrapper {
-  background: #FFFFFF;
-  border-radius: 20px;
-  padding: 18px;
-  display: inlin-block;
-  margin: 0 auto 30px;
-  width: 454px;
-}
-
-.cartelle table {
-  table-layout: fixed;
-  border-collapse: collapse;
-}
-
-.cartelle td {
-  border: 1px solid #E9DDD3;
-}
-
-.cartelle table {
-  border: 2px solid #FFFFFF;
-}
-
-.cartelle td {
-  font-size: 22px;
-  color: #7E6755;
-  position: relative;
-  width: 49px;
-  height: 49px;
-  text-align: center;
-}
-
-.cartelle td.clickable {
-  cursor: pointer;
-}
-
-.cartelle td.clickable:hover span {
-  color: #65503f;
-}
-
-.cartelle td.emptyCell {
-  cursor: default;
-}
-
-.cartelle td span {
-  position: absolute;
-  z-index: 1;
-  line-height: 52px;
-  height: 49px;
-  width: 49px;
-  overflow: hidden;
-  top: 0px;
-  right: 0px
-}
-
-.cartelle .selected span {
-  font-size: 13px;
-  height: 20px;
-  width: 20px;
-  right: 0px;
-  top: 0px;
-  line-height: 20px
-}
-
-.cartelle td:before {
-  content: "";
-  background-image: url(https://tombolagratis.it/img/fagiolo.png);
-  background-size: cover;
-  width: 0;
-  height: 0;
-  position: absolute;
-  bottom: 3px;
-  left: 3px;
-  z-index: 0;
-}
-
-.cartelle .selected:before {
-  content: "";
-  width: 43px;
-  height: 36px;
-}
-
-@media(max-width: 500px) {
-  .cartelle .cartella-wrapper {
-    width: 253px;
-  }
-
-  .cartelle .emptyCell {
-    display: none;
-  }
-}
-
-@media(max-width: 600px) {
-  .cartelle .logo {
-    margin: 25px auto;
-  }
-}
-
-
-
-/* ==== HACK FIREFOX ==== */
-@-moz-document url-prefix() {
-  .tabellone .option01 {
-    display: none;
-  }
-}
-
-/* ADV
-.cartelle .footerFixed{height:150px}
-.advFooterCartella{background: rgb(0 0 0 / 8%);max-height:90px;width:100%;position:absolute;top:0;left:0;text-align:center;z-index:1;}
-/* ADV */
