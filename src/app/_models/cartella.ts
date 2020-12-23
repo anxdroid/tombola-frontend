@@ -14,6 +14,7 @@ export class Cartella {
   righe: string = "";
   risultati: string = "";
   risultatiArray: number[] = [];
+  maxRisultato: number = 0;
   seq: number = -1;
 
   constructor(sessionId:Number, userId: Number) {
