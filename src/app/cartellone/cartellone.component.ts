@@ -1,7 +1,5 @@
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { User } from '../_models';
 import { Estrazione } from '../_models/estrazione';
 import { Messaggio } from '../_models/messaggio';
@@ -175,6 +173,7 @@ export class CartelloneComponent implements OnInit {
       this.closeNumbers.push([0, 0]);
       this.closeNumbersOld.push([0, 0]);
       this.newClose.push([false, false]);
+      console.log(this.cartellone);
     }
   }
 

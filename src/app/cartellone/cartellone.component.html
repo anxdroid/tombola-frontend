@@ -1,34 +1,28 @@
-{{+lastMessage.userId+": "+lastMessage.command+" "+lastMessage.payload}}
-<table table width="1440px">
-  <tr>
-    <td valign="top">
-      &nbsp;
-      <table width="100%" style="border: 1px solid black;">
-        <tr *ngFor="let riga of cartellone; let r = index;" height="40">
-          <td align="center" width="40" [attr.bgcolor]="(newClose[r][0] ? 'gold' : 'white')">
-            <span *ngIf="closeNumbers[r][0] > 0">{{closeNumbers[r][0]}}</span>
-          </td>
-          <td class="circle" width="40" [attr.id]="'id'+colonna.number" *ngFor="let colonna of riga; let c = index" nowrap="nowrap" align="center" style="border: 1px solid black;">
-            {{colonna.number}}
-          </td>
-          <td align="center" width="40" [attr.bgcolor]="(newClose[r][1] ? 'gold' : 'white')">
-            <span *ngIf="closeNumbers[r][1] > 0">{{closeNumbers[r][1]}}</span>
-          </td>
-        </tr>
-      </table>
-    </td>
-    <td>
-      <div class="">
-        <div id="extract" class="button" (click)="extract()">{{testoBottone}}</div>
-        <!--<div id="disableExtract" class="button">Attendi ...</div>-->
-        <div class="">
-          <div id="number">{{numero.number}}</div>
-          <div class="">
-            <p id="didascalia">{{numero.text}}</p>
-            <p id="traduzione">{{numero.translation}}</p>
-          </div>
-        </div>
+<div class="tavola mx-auto">
+  <div class="action">
+    <div id="extract" class="button" (click)="extract()">{{testoBottone}}</div>
+    <!--<div id="disableExtract" class="button">Attendi ...</div>-->
+    <div class="extracted">
+      <div class="number text-highlight" id="number">{{numero.number}}</div>
+      <div class="number-meaning">
+        <div id="didascalia">{{numero.text}}</div>
+        <div id="traduzione">{{numero.translation}}</div>
       </div>
-    </td>
-  </tr>
-</table>
+    </div>
+  </div>
+
+  <div class="cartellone">
+    <div *ngFor="let riga of cartellone; let r = index;" class="riga">
+      <div [attr.class]="(newClose[r][0] ? 'new' : 'old')">
+        <span class="indicatore" *ngIf="closeNumbers[r][0] > 0">{{closeNumbers[r][0]}}</span>
+      </div>
+      <div class="cella circle" [attr.id]="'id'+colonna.number" *ngFor="let colonna of riga; let c = index" style="border: none;">
+        {{colonna.number}}
+      </div>
+      <div [attr.class]="(newClose[r][1] ? 'new' : 'old')">
+        <span class="indicatore" *ngIf="closeNumbers[r][1] > 0">{{closeNumbers[r][1]}}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
