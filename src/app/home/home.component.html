@@ -1,12 +1,15 @@
-﻿<h1>Hi {{currentUser.firstName}}!</h1>
-<p>You're logged in with Angular 8!!</p>
-<h3>All registered users:</h3>
-<ul>
-    <li *ngFor="let user of users">
-        {{user.username}} ({{user.firstName}} {{user.lastName}})
-        - <a (click)="deleteUser(user.id)" class="text-danger">Delete</a>
-    </li>
-    <li>
-      <a routerLink="/sessione">Partite</a>
-    </li>
-</ul>
+﻿<div class="intro mx-auto">
+    <div class="text-center">
+        <h1>Ciao {{currentUser.firstName}}!</h1>
+        <div class="button" routerLink="/sessione">Gioca</div>
+    </div>
+    <hr /> 
+    <h3>Giocatori registrati</h3>
+    <ul>
+        <li *ngFor="let user of users">
+            <div><span class="font-weight-bold">{{user.username}}</span> - {{user.firstName}} {{user.lastName}}</div>
+            <a class="button button-link button-small" (click)="deleteUser(user.id)">Rimuovi</a>
+        </li>
+    </ul>
+<div>
+

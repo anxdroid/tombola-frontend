@@ -1,2 +1,118 @@
 @import url(../_content/app.less);
 
+.tavola{
+    width: fit-content;
+    min-height: calc(~"100vh - "@size-medium);
+}
+
+.action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 120px;
+    margin: @spacing-small @size-medium;
+}
+
+.extracted {
+    display: flex;
+    align-items: center;
+    padding-left: @spacing-medium;
+}
+
+.number {
+    font-size: @text-xxlarge;
+}
+
+.number-meaning {
+    padding-left: @spacing-small;
+    font-size: @text-xlarge;
+    text-align: right;
+    #traduzione {
+        font-size: @text-large;
+        color: @text-secondary;
+    }
+}
+
+.cartellone {
+    background-color: rgba(255,255,255,0.1);
+    box-shadow: @shadow-small;
+    border-radius: @size-xsmall;
+    padding: @spacing-small;
+    width: fit-content;
+}
+
+.riga {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    div {
+        height: @size-medium;
+        width: @size-medium;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    .cella {
+        font-size: @text-large;
+        color: @text-primary;
+        &.selected::after {
+            content: ' ';
+            -webkit-transform: rotateZ(40deg);
+            transform: rotateZ(40deg);
+            background-image: url(../../assets/img/fagiolo.png);
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: absolute;
+            width: inherit;
+            height: inherit;
+        }
+    }
+    .indicatore {
+        border-radius: @size-medium/2;
+        height: @size-medium/2;
+        width: @size-medium/2;
+        box-shadow: @shadow-small;
+    }
+    
+    .new {
+        .indicatore {
+            background-color: @color5;
+            color: @text-inverse;
+        }
+    }
+    .old {
+        .indicatore {
+            background-color: #fff;
+            color: @text-inverse;
+        }
+    }
+}
+    
+@keyframes circleRotante {
+0% {
+    color: #FFFFFF;
+    opacity: 0;
+    //-webkit-transform: rotateY(180deg) rotateZ(0deg) scale(1);
+    //transform: rotateY(180deg) rotateZ(0deg) scale(1);
+    z-index: 5;
+}
+
+50% {
+    color: #FFFFFF;
+    opacity: 1;
+    z-index: 5;
+}
+
+100% {
+    color: @color2;
+    opacity: 1;
+    //-webkit-transform: rotateY(360deg) rotateZ(-360deg) scale(1);
+    //transform: rotateY(360deg) rotateZ(-360deg) scale(1);
+    z-index: 5;
+    background: @color1;
+    z-index: 1;
+}
+}

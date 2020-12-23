@@ -1,17 +1,25 @@
-<!-- nav -->
-<nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
-    <div class="navbar-nav">
-        <a class="nav-item nav-link" routerLink="/">Home</a>
-        <a class="nav-item nav-link" (click)="logout()">Logout</a>
-    </div>
-</nav>
+<div class="app">
+    <!-- nav -->
+    <nav class="navbar navbar-expand navbar-dark sticky-top" *ngIf="currentUser">
+        <div class="navbar-nav mr-auto">
+            <a class="nav-item nav-link" routerLink="/">Home</a>
+        </div>
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" (click)="logout()">Logout</a>
+        </div>
+    </nav>
 
-<!-- main app container -->
-<div class="container">
-    <div class="row">
-        <div class="col-sm-6 offset-sm-3">
-            <alert></alert>
-            <router-outlet></router-outlet>
+    <!-- main app container -->
+    <div class="container-fluid">
+        <div class="row justify-content-md-center align-items-center">
+            <div class="col col-lg-3 d-none d-lg-block feed">
+            </div>
+            <div class="col-md-auto board">
+                <!--<alert></alert>-->
+                <router-outlet></router-outlet>
+            </div>
+            <div class="col col-lg-3 d-none d-lg-block">
+            </div>
         </div>
     </div>
 </div>
