@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractFormGroupDirective, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { User } from '../_models';
@@ -25,6 +25,13 @@ export class CartelleComponent implements OnInit {
   session: Sessione = new Sessione(0, 0);
   numero: Numero = { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "", "text": "", "translation": "" };
   currentUser: User;
+  premi: any = {
+    2: "ambo",
+    3: "terno",
+    4: "quaterna",
+    5: "cinquina",
+    15: "tombola"
+  };
   numeri: Numero[] = [
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "1", "text": "L'Italia", "translation": "" },
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "2", "text": "'A criatura", "translation": "il bimbo" },
@@ -126,6 +133,7 @@ export class CartelleComponent implements OnInit {
   numeroCartelle: number = 0;
   cartelle: Cartella[] = [];
   estratti: Estrazione[] = [];
+  lastMessage:string = "";
 
   connection: any;
   lastSeq: number = -1;
@@ -145,7 +153,7 @@ export class CartelleComponent implements OnInit {
   public saveCartella(cartella: Cartella, count: boolean) {
     this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
       data => {
-        console.log(cartella, data);
+        //console.log(cartella, data);
         if (data.id !== undefined) {
           cartella.id = data.id;
         }
@@ -164,17 +172,6 @@ export class CartelleComponent implements OnInit {
     for (let cartella of this.cartelle) {
       cartella.risultatiArray = [];
       this.saveCartella(cartella, true);
-      /*
-      this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
-        data => {
-          cartella.id = data.id;
-          cartella.risultatiArray = [];
-          this.savedCount++;
-        },
-        error => {
-          this.alertService.error(error);
-        });
-        */
     }
   }
 
@@ -261,6 +258,7 @@ export class CartelleComponent implements OnInit {
   public check(nuovoNumero: boolean): void {
     let ultimoRisultato = 0;
     for (let cartella of this.cartelle) {
+      cartella.totRisultato = 0;
       let risultatoCartella: number = 0;
       cartella.seq = this.lastSeq;
       cartella.risultatiArray = [];
@@ -269,6 +267,7 @@ export class CartelleComponent implements OnInit {
         for (let numero of riga) {
           if (numero.issued) {
             risultatoRiga++;
+            cartella.totRisultato++;
           }
         }
         if (risultatoRiga > risultatoCartella) {
@@ -283,24 +282,9 @@ export class CartelleComponent implements OnInit {
       }
       // Salvo la cartella aggiornata
       if (nuovoNumero) {
-        console.log(cartella);
         this.saveCartella(cartella, false);
-        /*
-        this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
-          data => {
-          },
-          error => {
-            this.alertService.error(error);
-          });
-        */
       }
     }
-
-    /*
-    if (nuovoNumero && ultimoRisultato > 1 && ultimoRisultato > this.session.ultimoRisultato) {
-      this.send("notifyResult", '{"risultato": ' + ultimoRisultato + ', seq: ' + this.lastSeq + ' }');
-    }
-    */
   }
 
   // carica lo stato delle cartelle dal backend
@@ -313,13 +297,12 @@ export class CartelleComponent implements OnInit {
           // carico le cartelle
           this.tombolaService.resumeCartelle(this.sessionId, this.currentUser.id).subscribe(
             cartelle => {
-              //console.log(data);
               this.cartelle = [];
               this.savedCount = 0;
               this.numeroCartelle = 0;
+              // inizializzo i dati dinamici delle cartelle
               for (let caI in cartelle) {
                 let cartella = cartelle[caI];
-                //console.log(cartella);
                 cartella.risultatiArray = [];
                 cartella.indici = JSON.parse(cartella.righe);
                 cartella.numeri = [];
@@ -342,14 +325,12 @@ export class CartelleComponent implements OnInit {
                 this.cartelle.push(cartella);
                 this.numeroCartelle++;
               }
-
               // carico i numeri estratti
               this.tombolaService.resumeSession(this.sessionId).subscribe(
                 estratti => {
-                  //console.log(data);
                   this.estratti = estratti;
+                  // cerco i numeri sulle cartelle
                   for (let estratto of this.estratti) {
-                    //console.log(estratto);
                     if (+estratto.seq > this.lastSeq) {
                       this.lastSeq = +estratto.seq;
                       console.log("New seq:" + this.lastSeq);
@@ -359,27 +340,14 @@ export class CartelleComponent implements OnInit {
                       this.selectNumber(numero);
                     }
                   }
-
+                  // controllo i punteggi
                   this.check(false);
-
                   // allineo i risultati con il backend
                   for (let cartella of this.cartelle) {
-                    //console.log("syncing...", cartella);
                     if (cartella.seq != this.lastSeq) {
                       cartella.seq = this.lastSeq;
                     }
                     this.saveCartella(cartella, true);
-                    /*
-                    this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
-                      data => {
-                        //console.log("sync'd...", data);
-                      },
-                      error => {
-                        console.log(error);
-                        this.alertService.error(error);
-                      });
-                    */
-
                   }
                 },
                 error => {
@@ -407,11 +375,15 @@ export class CartelleComponent implements OnInit {
         if (+payload.seq > this.lastSeq) {
           this.lastSeq = +payload.seq;
           this.session.ultimoSeq = this.lastSeq;
-          console.log("New seq:" + this.lastSeq);
+          //console.log("New seq:" + this.lastSeq);
         }
         this.estratti.push(new Estrazione(message.sessionId, message.userId, +payload.number));
         this.selectNumber(numero);
         this.check(true);
+      }
+
+      if (message.command == "notifyWinner") {
+        this.lastMessage = "L'utente "+message.payload.winner+" ha fatto "+this.premi[+message.payload.result]+"!";
       }
     }
   }
@@ -431,7 +403,7 @@ export class CartelleComponent implements OnInit {
     this.route.params.subscribe(params => {
       //console.log(params);
       this.sessionId = params['sessionId'];
-      
+
       // connessione alla websocket
       this.connection = this.chatService.start(this.sessionId, this.currentUser.id);
       this.connection.subscribe((msg: Messaggio) => { this.receive(msg) });

@@ -205,8 +205,15 @@ export class CartelloneComponent implements OnInit {
   }
 
   public extract(): void {
+    let ret: boolean = false;
+    while (!ret) {
+      ret = this.doExtract();
+    }
+  }
+
+  public doExtract(): boolean {
     this.testoBottone = "Attendi...";
-    let randomIndex = Math.floor((Math.random() * 90));
+    let randomIndex = Math.floor((Math.random() * 91));
     if (randomIndex != 0) {
       randomIndex--;
     }
@@ -218,22 +225,30 @@ export class CartelloneComponent implements OnInit {
 
       if (this.selectNumber()) {
 
-        this.session.ultimoSeq++;
-        //console.log("Sending", this.session);
-        this.tombolaService.saveSession(this.session)
-        .subscribe(
-          data => {
-            //console.log(data)
-            this.numeri[randomIndex].issued = true;
-            let estrazione = new Estrazione(this.sessionId, this.currentUser.id, parseInt(this.numeri[randomIndex].number));
-            estrazione.seq = this.session.ultimoSeq;
+        this.tombolaService.getSession(this.sessionId).subscribe(
+          session => {
+            this.session = session;
+            this.session.ultimoSeq++;
+            //console.log("Sending", this.session);
 
-            this.tombolaService.extract(estrazione)
+            this.tombolaService.saveSession(this.session)
               .subscribe(
                 data => {
                   //console.log(data)
-                  this.alertService.success("Saved !", true);
-                  this.check();
+                  this.numeri[randomIndex].issued = true;
+                  let estrazione = new Estrazione(this.sessionId, this.currentUser.id, parseInt(this.numeri[randomIndex].number));
+                  estrazione.seq = this.session.ultimoSeq;
+
+                  this.tombolaService.extract(estrazione)
+                    .subscribe(
+                      data => {
+                        //console.log(data)
+                        this.alertService.success("Saved !", true);
+                        this.check();
+                      },
+                      error => {
+                        this.alertService.error(error);
+                      });
                 },
                 error => {
                   this.alertService.error(error);
@@ -242,16 +257,13 @@ export class CartelloneComponent implements OnInit {
           error => {
             this.alertService.error(error);
           });
-
-
-
-
       }
     } else {
       console.log("Discarding " + randomIndex);
-      this.extract();
+      return false;
     }
     this.testoBottone = "Estrai";
+    return true;
   }
 
   public check(): void {
@@ -295,7 +307,7 @@ export class CartelloneComponent implements OnInit {
             this.numero.issued = true;
             if (+data[e].seq > this.lastSeq) {
               this.lastSeq = +data[e].seq;
-              console.log("New seq:"+this.lastSeq);
+              console.log("New seq:" + this.lastSeq);
             }
             this.selectNumber();
           }
