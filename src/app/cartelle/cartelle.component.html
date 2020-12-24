@@ -8,7 +8,7 @@
         (totale: {{+session.costoCartella * numeroCartelle}} &euro;)
       </span>
     </h1>
-    <span *ngIf="session != null && session.stato == 0 && savedCount == 0 && !owner">
+    <div class="genera" *ngIf="session != null && session.stato == 0 && savedCount == 0 && !owner">
       <form [formGroup]="cartelleForm" (ngSubmit)="setCartelle()" >
         <div class="input-button-group d-flex">
           <div class="form-group">
@@ -30,7 +30,7 @@
           Salva
         </button>
       </div>
-    </span>
+    </div>
     <div class="container" *ngIf="session != null && numeroCartelle > 0 && !owner">
       <div class="row" *ngIf="estratti.length > 0">
         <div class="estratti">
