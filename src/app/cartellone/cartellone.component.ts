@@ -226,7 +226,7 @@ export class CartelloneComponent implements OnInit {
       }
 
       if (message.command == "notifyWinners") {
-        console.log(message.payload.winners, this.risultati[+message.payload.result].perc);
+        //console.log(message.payload.winners, this.risultati[+message.payload.result].perc);
         let risultato = this.risultati[+message.payload.result]
         let premio = risultato.premio / message.payload.winners.length;
         this.lastMessage = "Gli utenti " + message.payload.winners + " ha/nno fatto " + risultato.label + " vincendo " + premio + " EUR a testa !";
@@ -392,8 +392,6 @@ export class CartelloneComponent implements OnInit {
 
   // genera il cartellone
   public setCartellone(): void {
-
-    //console.log(this.numeroCartelle);
     this.cartelle = [];
     let increment = -30;
     for (let ca = 0; ca < this.numeroCartelle; ca++) {
@@ -421,7 +419,6 @@ export class CartelloneComponent implements OnInit {
 
       }
       this.cartelle.push(cartella);
-      this.montepremi += +this.session.costoCartella;
       this.saveCartella(cartella, true);
     }
     console.log(this.cartelle);

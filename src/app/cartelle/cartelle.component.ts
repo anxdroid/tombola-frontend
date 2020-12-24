@@ -424,7 +424,11 @@ export class CartelleComponent implements OnInit {
       }
 
       if (message.command == "notifyWinners") {
-        this.lastMessage = "Gli utenti " + message.payload.winners + " ha/nno fatto " + this.risultati[+message.payload.result].label + "!";
+        if (message.payload.winners.includes(this.currentUser.id)) {
+          this.lastMessage = "Complimenti ! Hai fatto " + this.risultati[+message.payload.result].label + "!";
+        }else{
+          this.lastMessage = "Gli utenti " + message.payload.winners + " ha/nno fatto " + this.risultati[+message.payload.result].label + "!";
+        }
       }
     }
   }
