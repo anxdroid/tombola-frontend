@@ -156,10 +156,13 @@ export class CartelleComponent implements OnInit {
   public saveCartella(cartella: Cartella, count: boolean) {
     this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
       data => {
-        //console.log(cartella, data);
+
         if (data.id !== undefined) {
-          cartella.id = data.id;
+          cartella.id = +data.id;
+          console.log(data.id, cartella);
+          console.log(this.cartelle);
         }
+
         if (count) {
           this.savedCount++;
           if (this.savedCount == this.numeroCartelle) {
@@ -175,8 +178,10 @@ export class CartelleComponent implements OnInit {
   // salva le cartelle create
   public save(): void {
     this.savedCount = 0;
+
     for (let cartella of this.cartelle) {
       cartella.risultatiArray = [];
+      console.log("save", cartella);
       this.saveCartella(cartella, true);
     }
   }
@@ -192,6 +197,7 @@ export class CartelleComponent implements OnInit {
   }
 
   // genera il cartellone
+  /*
   public setCartellone(): void {
     this.numeroCartelle = 6;
     //console.log(this.numeroCartelle);
@@ -225,6 +231,7 @@ export class CartelleComponent implements OnInit {
     }
     console.log("setCartelle", this.cartelle);
   }
+  */
 
   // genera le cartelle
   public setCartelle(): void {
@@ -261,7 +268,7 @@ export class CartelleComponent implements OnInit {
       }
       this.cartelle.push(cartella);
     }
-    //console.log("setCartelle", this.cartelle);
+    console.log("setCartelle", this.cartelle);
   }
 
   // utile per i cicli for nel codice html
@@ -460,11 +467,13 @@ export class CartelleComponent implements OnInit {
           if (this.session.userId != this.currentUser.id) {
             this.resume();
           } else {
+            /*
             this.owner = true;
             console.log("Owner !");
             if (this.session.stato == 0) {
               this.setCartellone();
             }
+            */
           }
         },
         error => {
