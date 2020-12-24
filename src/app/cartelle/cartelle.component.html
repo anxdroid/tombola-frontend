@@ -1,48 +1,52 @@
-<div class="cartelle mx-auto">
-  <h1>Cartelle costo {{session.costoCartella}} &euro;
-    <span *ngIf="numeroCartelle > 0">
-      (totale: {{+session.costoCartella * numeroCartelle}} &euro;)
-    </span>
-  </h1>
-  <span *ngIf="session != null && session.stato == 0 && savedCount == 0 && !owner">
-    <form [formGroup]="cartelleForm" (ngSubmit)="setCartelle()" >
-      <div class="input-button-group d-flex">
-        <div class="form-group">
-          <label for="numeroCartelle">Numero Cartelle</label>
-          <input type="text" formControlName="numeroCartelle" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.numeroCartelle.errors }" />
-          <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-            <div *ngIf="f.username.errors.required">Numero Cartelle is required</div>
+<div class="row justify-content-md-center tavola">
+  <div class="col-lg-3">
+    {{lastMessage}}
+  </div>
+  <div class="col-lg-8">
+    <h1>Cartelle costo {{session.costoCartella}} &euro;
+      <span *ngIf="numeroCartelle > 0">
+        (totale: {{+session.costoCartella * numeroCartelle}} &euro;)
+      </span>
+    </h1>
+    <span *ngIf="session != null && session.stato == 0 && savedCount == 0 && !owner">
+      <form [formGroup]="cartelleForm" (ngSubmit)="setCartelle()" >
+        <div class="input-button-group d-flex">
+          <div class="form-group">
+            <label for="numeroCartelle">Numero Cartelle</label>
+            <input type="text" formControlName="numeroCartelle" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.numeroCartelle.errors }" />
+            <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+              <div *ngIf="f.username.errors.required">Numero Cartelle is required</div>
+            </div>
           </div>
+          <button [disabled]="loading" class="button button-link">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Genera
+          </button>
         </div>
-        <button [disabled]="loading" class="button button-link">
+      </form>
+      <div class="form-group d-flex">
+        <button [disabled]="numeroCartelle == 0" class="button" (click)="save()">
           <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-          Genera
+          Salva
         </button>
       </div>
-    </form>
-    <div class="form-group d-flex">
-      <button [disabled]="numeroCartelle == 0" class="button" (click)="save()">
-        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-        Salva
-      </button>
-    </div>
-  </span>
-{{lastMessage}}
-  <div class="container" *ngIf="session != null && numeroCartelle > 0 && !owner">
-    <div class="row" *ngIf="estratti.length > 0">
-      <div class="estratti">
-        <div *ngFor="let estratto of estratti; let e = index">{{estratto.number}}</div>
+    </span>
+    <div class="container" *ngIf="session != null && numeroCartelle > 0 && !owner">
+      <div class="row" *ngIf="estratti.length > 0">
+        <div class="estratti">
+          <div *ngFor="let estratto of estratti; let e = index">{{estratto.number}}</div>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="cartelle-lista">
-        <div class="cartella" *ngFor="let cartella of cartelle; let ca = index">
-          <div class="riga" *ngFor="let r of createRange(3)">
-            <div [attr.class]="cartella.risultatiArray[r] > 0 ? 'risultato checked' : 'risultato'">
-              {{(cartella.risultatiArray[r] > 0) ? cartella.risultatiArray[r] : ''}}
-            </div>
-            <div [attr.id]="'id'+ca+'x'+r+'x'+c" *ngFor="let c of createRange(5)" [attr.class]="cartella.numeri[r][c].issued?'cella selected' : 'cella'">
-              <span>{{cartella.numeri[r][c].number}}</span>
+      <div class="row">
+        <div class="cartelle-lista">
+          <div class="cartella" *ngFor="let cartella of cartelle; let ca = index">
+            <div class="riga" *ngFor="let r of createRange(3)">
+              <div [attr.class]="cartella.risultatiArray[r] > 0 ? 'risultato checked' : 'risultato'">
+                {{(cartella.risultatiArray[r] > 0) ? cartella.risultatiArray[r] : ''}}
+              </div>
+              <div [attr.id]="'id'+ca+'x'+r+'x'+c" *ngFor="let c of createRange(5)" [attr.class]="cartella.numeri[r][c].issued?'cella selected' : 'cella'">
+                <span>{{cartella.numeri[r][c].number}}</span>
+              </div>
             </div>
           </div>
         </div>
