@@ -1,49 +1,53 @@
-{{(session !== undefined && session.stato < 2) ? lastMessage : "Partita conclusa !"}}
+<div class="row justify-content-md-center tavola">
+  <div class="col-lg-3">
+    {{(session !== undefined && session.stato < 2) ? lastMessage : "Partita conclusa !"}}
 
-{{utentiConnessi.length}} utenti connessi
-Montepremi {{montepremi}} &euro;
+    {{utentiConnessi.length}} utenti connessi
+    Montepremi {{montepremi}} &euro;
+    <ul>
+      <li *ngFor="let ri of objectKeys(risultati); let r = index" [ngStyle]="{'font-weight':(session!== undefined && +session.ultimoRisultato < +ri)?'bold':''}">
+        {{risultati[ri].label}} - {{risultati[ri].premio}} &euro;
+      </li>
+    </ul>
+  </div>
+  <div class="col-lg-8">
+    <div class="action">
+      <div id="extract" *ngIf="session !== undefined && session.stato < 2" [class]="{button:!waiting}" (click)="extract()">{{(waiting) ? "Attendi..." : "Estrai !"}}</div>
+      <div class="extracted">
+        <div class="number text-highlight" *ngIf="session !== undefined && session.stato < 2" id="number">{{numero.number}}</div>
+        <div class="number-meaning" *ngIf="session !== undefined && session.stato < 2">
+          <div id="didascalia">{{numero.text}}</div>
+          <div id="traduzione">{{numero.translation}}</div>
+        </div>
+      </div>
+    </div>
 
-<ul>
-  <li *ngFor="let ri of objectKeys(risultati); let r = index" [ngStyle]="{'font-weight':(session!== undefined && +session.ultimoRisultato < +ri)?'bold':''}">
-    {{risultati[ri].label}} - {{risultati[ri].premio}} &euro;
-  </li>
-</ul>
-<div class="tavola mx-auto">
-  <div class="action">
-    <div id="extract" *ngIf="session !== undefined && session.stato < 2" [class]="{button:!waiting}" (click)="extract()">{{(waiting) ? "Attendi..." : "Estrai !"}}</div>
-    <div class="extracted">
-      <div class="number text-highlight" *ngIf="session !== undefined && session.stato < 2" id="number">{{numero.number}}</div>
-      <div class="number-meaning" *ngIf="session !== undefined && session.stato < 2">
-        <div id="didascalia">{{numero.text}}</div>
-        <div id="traduzione">{{numero.translation}}</div>
+    <!--
+    <div class="cartellone">
+      <div *ngFor="let riga of cartellone; let r = index;" class="riga">
+        <div [attr.class]="(newClose[r][0] ? 'new' : 'old')">
+          <span class="indicatore" *ngIf="closeNumbers[r][0] > 0">{{closeNumbers[r][0]}}</span>
+        </div>
+        <div class="cella" [attr.id]="'id'+colonna.number" *ngFor="let colonna of riga; let c = index" style="border: none;">
+          {{colonna.number}}
+        </div>
+        <div [attr.class]="(newClose[r][1] ? 'new' : 'old')">
+          <span class="indicatore" *ngIf="closeNumbers[r][1] > 0">{{closeNumbers[r][1]}}</span>
+        </div>
       </div>
     </div>
   </div>
-
-  <!--
-  <div class="cartellone">
-    <div *ngFor="let riga of cartellone; let r = index;" class="riga">
-      <div [attr.class]="(newClose[r][0] ? 'new' : 'old')">
-        <span class="indicatore" *ngIf="closeNumbers[r][0] > 0">{{closeNumbers[r][0]}}</span>
-      </div>
-      <div class="cella" [attr.id]="'id'+colonna.number" *ngFor="let colonna of riga; let c = index" style="border: none;">
-        {{colonna.number}}
-      </div>
-      <div [attr.class]="(newClose[r][1] ? 'new' : 'old')">
-        <span class="indicatore" *ngIf="closeNumbers[r][1] > 0">{{closeNumbers[r][1]}}</span>
-      </div>
-    </div>
-  </div>
-</div>
--->
-<div class="cartellone">
-  <div *ngFor="let cartella of cartelle; let ca = index;">
-    <div *ngFor="let riga of cartella.numeri; let r = index;" class="riga">
-      <div>
-        {{(cartella.risultatiArray[r] > 0) ? cartella.risultatiArray[r] : ''}}
-      </div>
-      <div *ngFor="let numero of riga; let n = index;" class="cella circle" [ngClass]="{selected:numero.issued}">
-        {{numero.number}}
+  -->
+    <div class="cartellone">
+      <div *ngFor="let cartella of cartelle; let ca = index;" class="blocchetto">
+        <div *ngFor="let riga of cartella.numeri; let r = index;" class="riga">
+          <div [attr.class]="cartella.risultatiArray[r] > 0 ? 'risultato checked' : 'risultato'">
+            {{(cartella.risultatiArray[r] > 0) ? cartella.risultatiArray[r] : ''}}
+          </div>
+          <div *ngFor="let numero of riga; let n = index;" class="cella" [ngClass]="{selected:numero.issued}">
+            {{numero.number}}
+          </div>
+        </div>
       </div>
     </div>
   </div>
