@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>star-fill</title>
+    <g id="star-fill" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M3.612,15.443 C3.226,15.641 2.788,15.294 2.866,14.851 L3.696,10.121 L0.173,6.765 C-0.156,6.451 0.015,5.877 0.456,5.815 L5.354,5.119 L7.538,0.792 C7.735,0.402 8.268,0.402 8.465,0.792 L10.649,5.119 L15.547,5.815 C15.988,5.877 16.159,6.451 15.83,6.765 L12.307,10.121 L13.137,14.851 C13.215,15.294 12.777,15.641 12.391,15.443 L8,13.187 L3.611,15.443 L3.612,15.443 Z" id="Path" fill="#FFE79F" fill-rule="nonzero"></path>
+    </g>
+</svg>

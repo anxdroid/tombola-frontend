@@ -14,11 +14,13 @@
 
 @color3: #81C8AD;
 
-@color4: #569980;
+@color4: #114D43;
 
-@color5: #E4C332;
+@color5: #FFE79F;
 
-@color6: #CEB029;
+@color6: #E4C332;
+
+@color7: #9A8138;
 
 @primary: #fff;
 
@@ -33,7 +35,7 @@
 }
 
 .text-highlight {
-    color: @color5;
+    color: @color6;
 }
 
 .text-secondary {
@@ -115,6 +117,10 @@ li {
     }
 }
 
+input {
+    height: @size-medium;
+}
+
 p {
   font-size: @text-medium;
   line-height: 24px;
@@ -160,7 +166,7 @@ hr {
         font-size: @text-medium;
         &:hover {
             background-color: #fff;
-            color: @primary;
+            color: @inverse;
         }
     }
     &.button-small {
@@ -168,6 +174,21 @@ hr {
         height: @size-xsmall;
         padding: 0 @spacing-small;
         box-shadow: none;
+    }
+}
+
+.input-button-group {
+    display: flex;
+    align-items: flex-end;
+    .button {
+        margin-bottom: 1rem;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    input {
+        border-radius: @size-medium/2;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
     }
 }
 
@@ -232,4 +253,46 @@ form label {
     color: @inverse;
     border-radius: 10px;
     padding: @spacing-medium;
+}
+
+.tavola{
+    width: fit-content;
+    min-height: calc(~"100vh - "@size-medium);
+}
+
+
+/* ==== SCHEDE ==== */
+
+.riga {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    div {
+        height: @size-medium;
+        width: @size-medium;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    .indicatore {
+        border-radius: @size-medium/2;
+        height: @size-medium/2;
+        width: @size-medium/2;
+        box-shadow: @shadow-small;
+    }
+    
+    .new {
+        .indicatore {
+            background-color: @color6;
+            color: @inverse;
+        }
+    }
+    .old {
+        .indicatore {
+            background-color: #fff;
+            color: @inverse;
+        }
+    }
 }
