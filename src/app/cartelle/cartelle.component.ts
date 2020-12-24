@@ -7,6 +7,7 @@ import { Cartella } from '../_models/cartella';
 import { Estrazione } from '../_models/estrazione';
 import { Messaggio } from '../_models/messaggio';
 import { Numero } from '../_models/numero';
+import { Risultato } from '../_models/risultato';
 import { Sessione } from '../_models/sessione';
 import { AuthenticationService, AlertService } from '../_services';
 import { ChatService } from '../_services/chat.service';
@@ -25,12 +26,12 @@ export class CartelleComponent implements OnInit {
   session: Sessione = new Sessione(0, 0);
   numero: Numero = { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "", "text": "", "translation": "" };
   currentUser: User;
-  premi: any = {
-    2: "ambo",
-    3: "terno",
-    4: "quaterna",
-    5: "cinquina",
-    15: "tombola"
+  risultati: any = {
+    2: new Risultato("ambo", 5),
+    3: new Risultato("terno", 10),
+    4: new Risultato("quaterna", 15),
+    5: new Risultato("cinquina", 20),
+    15: new Risultato("tombola", 50)
   };
   numeri: Numero[] = [
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "1", "text": "L'Italia", "translation": "" },
@@ -161,6 +162,9 @@ export class CartelleComponent implements OnInit {
         }
         if (count) {
           this.savedCount++;
+          if (this.savedCount == this.numeroCartelle) {
+            this.send("joinUser", {numeroCartelle:this.numeroCartelle})
+          }
         }
       },
       error => {
@@ -419,8 +423,8 @@ export class CartelleComponent implements OnInit {
         this.check(true);
       }
 
-      if (message.command == "notifyWinner") {
-        this.lastMessage = "L'utente " + message.payload.winner + " ha fatto " + this.premi[+message.payload.result] + "!";
+      if (message.command == "notifyWinners") {
+        this.lastMessage = "Gli utenti " + message.payload.winners + " ha/nno fatto " + this.risultati[+message.payload.result].label + "!";
       }
     }
   }

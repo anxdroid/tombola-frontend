@@ -1,11 +1,14 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../_models';
+import { Cartella } from '../_models/cartella';
 import { Estrazione } from '../_models/estrazione';
 import { Messaggio } from '../_models/messaggio';
 
 import { Numero } from '../_models/numero';
+import { Risultato } from '../_models/risultato';
 import { Sessione } from '../_models/sessione';
+import { Utente } from '../_models/utente';
 import { AlertService, AuthenticationService } from '../_services';
 import { ChatService } from '../_services/chat.service';
 import { TombolaService } from '../_services/tombola.service';
@@ -22,6 +25,8 @@ export class CartelloneComponent implements OnInit {
   sessionId: number = 0;
   session!: Sessione;
   cartellone: Numero[][] = [];
+  cartelle: Cartella[] = [];
+  estratti: Estrazione[] = [];
   numeri: Numero[] = [
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "1", "text": "L'Italia", "translation": "" },
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "2", "text": "'A criatura", "translation": "il bimbo" },
@@ -115,24 +120,37 @@ export class CartelloneComponent implements OnInit {
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "90", "text": "'A paura", "translation": "la paura" }
   ];
 
+  risultati: any = {
+    2: new Risultato("ambo", 5),
+    3: new Risultato("terno", 10),
+    4: new Risultato("quaterna", 15),
+    5: new Risultato("cinquina", 20),
+    15: new Risultato("tombola", 50)
+  };
+
+  montepremi: number = 0;
+
   closeNumbers: number[][] = [];
   closeNumbersOld: number[][] = [];
   newClose: boolean[][] = [];
   //myWebSocket: WebSocketSubject<string> = webSocket('ws://localhost:1337');
 
-  testoBottone: string = "Estrai";
-  waiting: boolean = false;
+  waiting: boolean = true;
   numero: Numero = { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "", "text": "", "translation": "" };
   currentUser: User;
 
   connection: any;
 
-  lastMessage: Messaggio = new Messaggio();
+  lastMessage: string = "";
+
+  utentiConnessi: Utente[] = [];
 
   lastSeq: number = -1;
 
+  savedCount = 0;
+  numeroCartelle = 6;
+
   constructor(
-    private el: ElementRef,
     private tombolaService: TombolaService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
@@ -140,6 +158,7 @@ export class CartelloneComponent implements OnInit {
     private chatService: ChatService
   ) {
     this.currentUser = this.authenticationService.currentUserValue;
+
     for (let ir = 0; ir < 11; ir++) {
       let riga: Numero[] = [];
       for (let ic = 0; ic < 11; ic++) {
@@ -174,18 +193,43 @@ export class CartelloneComponent implements OnInit {
       this.closeNumbers.push([0, 0]);
       this.closeNumbersOld.push([0, 0]);
       this.newClose.push([false, false]);
-      console.log(this.cartellone);
     }
+  }
+
+  public objectKeys(obj: any) {
+    return Object.keys(obj);
   }
 
   public receive(message: Messaggio): void {
     if (+message.userId != +this.currentUser.id) {
       if (message.command == "notifySyncStatus") {
         //console.log(message);
-        if (message.payload.sync == 100 && message.payload.seq == this.session.ultimoSeq) {
-          console.log("All in sync ! Move on !");
+        if (message.payload.sync == 100 && message.payload.seq == this.session.ultimoSeq && this.utentiConnessi.length > 1) {
+          this.lastMessage = "Tutti gli utenti sono in sync !";
+          //console.log("All in sync ! Move on !");
           this.waiting = false;
         }
+      }
+
+      if (message.command == "joinUser") {
+        this.waiting = true;
+        this.lastMessage = message.userId + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
+        this.utentiConnessi.push(new Utente(message.userId, message.payload.numeroCartelle));
+        this.montepremi += message.payload.numeroCartelle * +this.session.costoCartella;
+        this.waiting = false;
+
+        for (let ri of this.objectKeys(this.risultati)) {
+          let risultato = this.risultati[ri];
+          risultato.premio = this.montepremi * risultato.perc / 100;
+        }
+
+      }
+
+      if (message.command == "notifyWinners") {
+        console.log(message.payload.winners, this.risultati[+message.payload.result].perc);
+        let risultato = this.risultati[+message.payload.result]
+        let premio = risultato.premio / message.payload.winners.length;
+        this.lastMessage = "Gli utenti " + message.payload.winners + " ha/nno fatto " + risultato.label + " vincendo " + premio + " EUR a testa !";
       }
     }
   }
@@ -200,7 +244,8 @@ export class CartelloneComponent implements OnInit {
     this.connection.next(messaggio);
   }
 
-  public selectNumber(): boolean {
+  /*
+  public isSelectedNumber(): boolean {
     let id: string = 'id' + this.numero.number;
     let numeroElement = this.el.nativeElement.querySelector("#" + id);
     if (numeroElement != null && !numeroElement.classList.contains('selected')) {
@@ -209,6 +254,7 @@ export class CartelloneComponent implements OnInit {
     }
     return false;
   }
+  */
 
   public extract(): void {
     let ret: boolean = false;
@@ -218,7 +264,6 @@ export class CartelloneComponent implements OnInit {
   }
 
   public doExtract(): boolean {
-    this.testoBottone = "Attendi...";
     let randomIndex = Math.floor((Math.random() * 91));
     if (randomIndex != 0) {
       randomIndex--;
@@ -229,50 +274,50 @@ export class CartelloneComponent implements OnInit {
     if (!numero.issued) {
       this.numero = this.numeri[randomIndex];
 
-      if (this.selectNumber()) {
+      this.selectNumber(this.numero);
 
-        this.tombolaService.getSession(this.sessionId).subscribe(
-          session => {
-            this.session = session;
-            this.session.ultimoSeq++;
-            //console.log("Sending", this.session);
+      this.tombolaService.getSession(this.sessionId).subscribe(
+        session => {
+          this.session = session;
+          this.session.ultimoSeq++;
+          this.lastSeq = this.session.ultimoSeq;
+          //console.log("Sending", this.session);
 
-            this.waiting = true;
-            this.tombolaService.saveSession(this.session)
-              .subscribe(
-                data => {
-                  //console.log(data)
-                  this.numeri[randomIndex].issued = true;
-                  let estrazione = new Estrazione(this.sessionId, this.currentUser.id, parseInt(this.numeri[randomIndex].number));
-                  estrazione.seq = this.session.ultimoSeq;
+          this.waiting = true;
+          this.tombolaService.saveSession(this.session)
+            .subscribe(
+              data => {
+                //console.log(data)
+                this.numeri[randomIndex].issued = true;
+                let estrazione = new Estrazione(this.sessionId, this.currentUser.id, parseInt(this.numeri[randomIndex].number));
+                estrazione.seq = this.session.ultimoSeq;
 
-                  this.tombolaService.extract(estrazione)
-                    .subscribe(
-                      data => {
-                        //console.log(data)
-                        this.alertService.success("Saved !", true);
-                        this.check();
-                      },
-                      error => {
-                        this.alertService.error(error);
-                      });
-                },
-                error => {
-                  this.alertService.error(error);
-                });
-          },
-          error => {
-            this.alertService.error(error);
-          });
-      }
+                this.tombolaService.extract(estrazione)
+                  .subscribe(
+                    data => {
+                      //console.log(data)
+                      //this.alertService.success("Saved !", true);
+                      this.check(true);
+                    },
+                    error => {
+                      this.alertService.error(error);
+                    });
+              },
+              error => {
+                this.alertService.error(error);
+              });
+        },
+        error => {
+          this.alertService.error(error);
+        });
     } else {
       console.log("Discarding " + randomIndex);
       return false;
     }
-    this.testoBottone = "Estrai";
     return true;
   }
 
+  /*
   public check(): void {
     for (let r = 0; r < 11; r++) {
       let count = 0;
@@ -325,15 +370,226 @@ export class CartelloneComponent implements OnInit {
         });
     }
   }
+  */
+
+
+  // salva la cartella
+  public saveCartella(cartella: Cartella, count: boolean) {
+    this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
+      data => {
+        //console.log(cartella, data);
+        if (data.id !== undefined) {
+          cartella.id = data.id;
+        }
+        if (count) {
+          this.savedCount++;
+        }
+      },
+      error => {
+        this.alertService.error(error);
+      });
+  }
+
+  // genera il cartellone
+  public setCartellone(): void {
+
+    //console.log(this.numeroCartelle);
+    this.cartelle = [];
+    let increment = -30;
+    for (let ca = 0; ca < this.numeroCartelle; ca++) {
+      if (ca % 2 == 0) {
+        increment += 30;
+      }
+      let primoNumero = ((ca % 2) * 5) + 1 + increment;
+
+      let cartella = new Cartella(this.sessionId, this.currentUser.id);
+      cartella.risultatiArray = [];
+      for (let r = 0; r < 3; r++) {
+        let primoNumeroRiga = primoNumero + (10 * r);
+        cartella.risultatiArray.push(0);
+        let riga: Numero[] = [];
+        let indici: number[] = [];
+        for (let c = 0; c < 5; c++) {
+          let randomNumber = primoNumeroRiga + c;
+          //console.log(ca, randomNumber);
+          indici.push(+randomNumber);
+          this.numeri[+randomNumber - 1].cartelle.push(ca);
+          riga.push(this.numeri[+randomNumber - 1]);
+        }
+        cartella.numeri.push(riga);
+        cartella.indici.push(indici);
+
+      }
+      this.cartelle.push(cartella);
+      this.montepremi += +this.session.costoCartella;
+      this.saveCartella(cartella, true);
+    }
+    console.log(this.cartelle);
+  }
+
+  // controlla i risultati raggiunti
+  public check(nuovoNumero: boolean): void {
+    let ultimoRisultato = 0;
+    for (let cartella of this.cartelle) {
+      cartella.totRisultato = 0;
+      let risultatoCartella: number = 0;
+      cartella.seq = this.lastSeq;
+      cartella.risultatiArray = [];
+      for (let riga of cartella.numeri) {
+        let risultatoRiga = 0;
+        for (let numero of riga) {
+          if (numero.issued) {
+            risultatoRiga++;
+            cartella.totRisultato++;
+          }
+        }
+        if (risultatoRiga > risultatoCartella) {
+          risultatoCartella = risultatoRiga;
+        }
+        cartella.risultatiArray.push(risultatoRiga);
+      }
+      cartella.risultati = JSON.stringify(cartella.risultatiArray);
+      cartella.maxRisultato = risultatoCartella;
+      if (cartella.maxRisultato > ultimoRisultato) {
+        ultimoRisultato = cartella.maxRisultato;
+      }
+      // Salvo la cartella aggiornata
+      if (nuovoNumero) {
+        this.saveCartella(cartella, false);
+      }
+    }
+  }
+
+  // seleziona il numero uscito
+  public selectNumber(numero: Numero): void {
+    //console.log("selecting "+numero, numero.cartelle);
+    for (let ca of numero.cartelle) {
+      let cartella = this.cartelle[ca];
+      //console.log(cartella);
+      for (let r in cartella.indici) {
+        let riga = cartella.indici[r];
+        for (let c in riga) {
+          let n = riga[c];
+          //console.log(numero.number, n);
+          if (+(numero.number) == +n) {
+            //console.log(numero.number, n);
+            //console.log(n, id);
+            cartella.numeri[r][c].issued = true;
+          }
+
+        }
+      }
+    }
+  }
+
+  // carica lo stato delle cartelle dal backend
+  public resume(): void {
+    if (this.sessionId > 0) {
+      // carico le info sulla sessione
+      this.tombolaService.getSession(this.sessionId).subscribe(
+        session => {
+          this.session = session;
+          // carico le cartelle
+          this.tombolaService.resumeCartelle(this.sessionId, this.currentUser.id).subscribe(
+            cartelle => {
+              this.cartelle = [];
+              this.savedCount = 0;
+              this.numeroCartelle = 0;
+              // inizializzo i dati dinamici delle cartelle
+              for (let caI in cartelle) {
+                let cartella = cartelle[caI];
+                cartella.risultatiArray = [];
+                cartella.indici = JSON.parse(cartella.righe);
+                cartella.numeri = [];
+
+                for (let rI in cartella.indici) {
+                  cartella.risultatiArray.push();
+                  let rigaIndici = cartella.indici[rI];
+                  let riga: Numero[] = [];
+                  for (let cI in rigaIndici) {
+
+                    let numero = this.numeri[(+rigaIndici[cI]) - 1];
+                    numero.cartelle.push(+caI);
+                    numero.row = +rI;
+                    numero.column = +cI;
+                    //console.log(numero);
+                    riga.push(numero);
+                  }
+                  cartella.numeri.push(riga);
+                }
+                this.cartelle.push(cartella);
+                this.numeroCartelle++;
+              }
+              // carico i numeri estratti
+              this.tombolaService.resumeSession(this.sessionId).subscribe(
+                estratti => {
+                  this.estratti = estratti;
+                  // cerco i numeri sulle cartelle
+                  for (let estratto of this.estratti) {
+                    if (+estratto.seq > this.lastSeq) {
+                      this.lastSeq = +estratto.seq;
+                      console.log("New seq:" + this.lastSeq);
+                    }
+                    let numero = this.numeri[+estratto.number - 1];
+                    if (numero.cartelle.length > 0) {
+                      this.selectNumber(numero);
+                    }
+                  }
+                  // controllo i punteggi
+                  this.check(false);
+                  // allineo i risultati con il backend
+                  for (let cartella of this.cartelle) {
+                    if (cartella.seq != this.lastSeq) {
+                      cartella.seq = this.lastSeq;
+                    }
+                    this.saveCartella(cartella, true);
+                  }
+                },
+                error => {
+                  this.alertService.error(error);
+                });
+
+            },
+            error => {
+              this.alertService.error(error);
+            });
+        },
+        error => {
+          this.alertService.error(error);
+        });
+    }
+  }
+
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      console.log(params);
       this.sessionId = params['sessionId'];
-      console.log(this.sessionId);
       this.connection = this.chatService.start(this.sessionId, this.currentUser.id);
       this.connection.subscribe((msg: Messaggio) => { this.receive(msg) });
-      this.resume();
+      this.numeroCartelle = 6;
+      this.utentiConnessi.push(new Utente(this.currentUser.id, this.numeroCartelle));
+
+      this.tombolaService.getSession(this.sessionId).subscribe(
+        session => {
+          this.session = session;
+          // resume dei dati da backend
+          this.montepremi = +this.session.costoCartella * this.numeroCartelle;
+          for (let ri of this.objectKeys(this.risultati)) {
+            let risultato = this.risultati[ri];
+            //console.log(risultato);
+            risultato.premio = this.montepremi * risultato.perc / 100;
+          }
+          if (this.session.stato == 0) {
+            this.setCartellone();
+          } else {
+
+            this.resume();
+          }
+        },
+        error => {
+          this.alertService.error(error);
+        }
+      );
     });
   }
 
