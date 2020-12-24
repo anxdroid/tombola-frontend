@@ -26,7 +26,7 @@ Montepremi {{montepremi}} &euro;
       <div [attr.class]="(newClose[r][0] ? 'new' : 'old')">
         <span class="indicatore" *ngIf="closeNumbers[r][0] > 0">{{closeNumbers[r][0]}}</span>
       </div>
-      <div class="cella circle" [attr.id]="'id'+colonna.number" *ngFor="let colonna of riga; let c = index" style="border: none;">
+      <div class="cella" [attr.id]="'id'+colonna.number" *ngFor="let colonna of riga; let c = index" style="border: none;">
         {{colonna.number}}
       </div>
       <div [attr.class]="(newClose[r][1] ? 'new' : 'old')">

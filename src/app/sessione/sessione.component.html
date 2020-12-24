@@ -20,12 +20,12 @@
             </button>
         </div>
     </form>
-    <hr>
-    <div class="widget">
+    <hr  *ngIf="sessions.length > 0">
+    <div *ngIf="sessions.length > 0" class="widget">
         <h3>Archivio partite</h3>
         <ul>
             <li *ngFor="let session of sessions.slice().reverse()">
-                <div><span class="font-weight-bold">Partita {{session.id}}:</span> {{session.createdAt}} - <span class="text-highlight">{{session.costoCartella}} &euro;</span></div> 
+                <div><span class="font-weight-bold">Partita {{session.id}}:</span> {{session.createdAt}} - <span class="text-secondary">{{session.costoCartella}} &euro;</span></div> 
                 <a class="button button-small" [routerLink]="[getCartelleLink(session), session.id]">Vai</a>
             </li>
         </ul>
