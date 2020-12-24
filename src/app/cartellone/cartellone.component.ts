@@ -211,7 +211,7 @@ export class CartelloneComponent implements OnInit {
         }
       }
 
-      if (message.command == "joinUser") {
+      if (message.command == "joinUser" && this.session.stato == 0) {
         this.waiting = true;
         this.lastMessage = message.userId + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
         this.utentiConnessi.push(new Utente(message.userId, message.payload.numeroCartelle));
@@ -243,18 +243,6 @@ export class CartelloneComponent implements OnInit {
     messaggio.date = new Date();
     this.connection.next(messaggio);
   }
-
-  /*
-  public isSelectedNumber(): boolean {
-    let id: string = 'id' + this.numero.number;
-    let numeroElement = this.el.nativeElement.querySelector("#" + id);
-    if (numeroElement != null && !numeroElement.classList.contains('selected')) {
-      numeroElement.classList.add('selected');
-      return true;
-    }
-    return false;
-  }
-  */
 
   public extract(): void {
     let ret: boolean = false;
@@ -316,62 +304,6 @@ export class CartelloneComponent implements OnInit {
     }
     return true;
   }
-
-  /*
-  public check(): void {
-    for (let r = 0; r < 11; r++) {
-      let count = 0;
-      for (let c = 0; c < 11; c++) {
-        if (c == 5) {
-          this.closeNumbers[r][0] = count;
-          this.newClose[r][0] = (this.closeNumbers[r][0] > this.closeNumbersOld[r][0]);
-          this.closeNumbersOld[r][0] = count;
-          count = 0;
-        }
-        let number = this.cartellone[r][c];
-        if (number.issued) {
-          count++;
-        }
-      }
-      this.closeNumbers[r][1] = count;
-      this.newClose[r][1] = (this.closeNumbers[r][1] > this.closeNumbersOld[r][1]);
-      this.closeNumbersOld[r][1] = count;
-    }
-  }
-
-  public resume(): void {
-    if (this.sessionId > 0) {
-      this.tombolaService.getSession(this.sessionId).subscribe(
-        data => {
-          console.log(data);
-          this.session = data;
-        },
-        error => {
-          this.alertService.error(error);
-        });
-
-      this.tombolaService.resumeSession(this.sessionId).subscribe(
-        data => {
-          for (let e in data) {
-            //console.log(data[e]);
-            let randomIndex = +data[e].number - 1;
-            this.numero = this.numeri[randomIndex];
-            this.numero.issued = true;
-            if (+data[e].seq > this.lastSeq) {
-              this.lastSeq = +data[e].seq;
-              console.log("New seq:" + this.lastSeq);
-            }
-            this.selectNumber();
-          }
-          this.check();
-        },
-        error => {
-          this.alertService.error(error);
-        });
-    }
-  }
-  */
-
 
   // salva la cartella
   public saveCartella(cartella: Cartella, count: boolean) {

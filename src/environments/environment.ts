@@ -8,7 +8,7 @@ export const environment = {
   //apiUrl: 'https://localhost:4000',
   //wsUrl: 'ws://localhost:1337',
   apiUrl: 'https://antopaoletti.ddns.net:4443',
-  wsUrl: 'ws://antopaoletti.ddns.net:4443',
+  wsUrl: 'wss://antopaoletti.ddns.net:4443',
   wsReconnectInterval: 2
 };
 
