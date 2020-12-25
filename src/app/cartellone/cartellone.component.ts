@@ -9,7 +9,7 @@ import { Numero } from '../_models/numero';
 import { Risultato } from '../_models/risultato';
 import { Sessione } from '../_models/sessione';
 import { Utente } from '../_models/utente';
-import { AlertService, AuthenticationService } from '../_services';
+import { AlertService, AuthenticationService, UserService } from '../_services';
 import { ChatService } from '../_services/chat.service';
 import { TombolaService } from '../_services/tombola.service';
 import { WebSocketService } from '../_services/websocket.service';
@@ -150,8 +150,11 @@ export class CartelloneComponent implements OnInit {
   savedCount = 0;
   numeroCartelle = 6;
 
+  users: User[] = [];
+
   constructor(
     private tombolaService: TombolaService,
+    private userService: UserService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private route: ActivatedRoute,
@@ -213,7 +216,7 @@ export class CartelloneComponent implements OnInit {
 
       if (message.command == "joinUser" && this.session.stato == 0) {
         this.waiting = true;
-        this.lastMessage = message.userId + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
+        this.lastMessage = this.getUserById(+message.userId).username + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
         this.utentiConnessi.push(new Utente(message.userId, message.payload.numeroCartelle));
         this.montepremi += message.payload.numeroCartelle * +this.session.costoCartella;
         this.waiting = false;
@@ -229,7 +232,18 @@ export class CartelloneComponent implements OnInit {
         //console.log(message.payload.winners, this.risultati[+message.payload.result].perc);
         let risultato = this.risultati[+message.payload.result]
         let premio = risultato.premio / message.payload.winners.length;
-        this.lastMessage = "Gli utenti " + message.payload.winners + " ha/nno fatto " + risultato.label + " vincendo " + premio + " EUR a testa !";
+        let winners:string = "";
+        for (let winnerId of message.payload.winners) {
+          if (winners != "") {
+            winners += ", ";
+          }
+          winners += this.getUserById(+winnerId).username
+        }
+        if (message.payload.winners.includes(this.currentUser.id)) {
+          this.lastMessage = "Complimenti ! Hai fatto " + risultato.label + "!";
+        }else{
+          this.lastMessage = winners + " ha"+(message.payload.winners.length > 1 ? "nno" : "")+" fatto " + risultato.label + " vincendo " + premio + " EUR"+(message.payload.winners.length > 1 ? " a testa" : "");
+        }
       }
     }
   }
@@ -489,8 +503,26 @@ export class CartelloneComponent implements OnInit {
     }
   }
 
+  public getUserById(id:number):User {
+    for (let user of this.users) {
+      if (user.id == id) {
+        return user;
+      }
+    }
+    return new User();
+  }
+
 
   ngOnInit(): void {
+    this.userService.getAll().subscribe(
+      users => {
+        this.users = users;
+        console.log(this.users);
+      },
+      error => {
+        this.alertService.error(error);
+      });
+
     this.route.params.subscribe(params => {
       this.sessionId = params['sessionId'];
       this.connection = this.chatService.start(this.sessionId, this.currentUser.id);

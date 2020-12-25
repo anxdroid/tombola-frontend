@@ -15,6 +15,7 @@ import { AlertComponent } from './_components';
 import { CartelloneComponent } from './cartellone/cartellone.component';
 import { SessioneComponent } from './sessione/sessione.component';
 import { CartelleComponent } from './cartelle/cartelle.component';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { CartelleComponent } from './cartelle/cartelle.component';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
   bootstrap: [AppComponent]
 })
