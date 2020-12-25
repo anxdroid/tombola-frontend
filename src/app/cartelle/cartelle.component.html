@@ -32,6 +32,11 @@
       </div>
     </div>
     <div class="container" *ngIf="session != null && numeroCartelle > 0 && !owner">
+      <div class="form-group d-flex">
+        <button *ngIf="session != null && session.stato == 1 && !owner" class="button" (click)="sync()">
+          Force Sync
+        </button>
+      </div>
       <div class="row" *ngIf="estratti.length > 0">
         <div class="estratti">
           <div *ngFor="let estratto of estratti; let e = index">{{estratto.number}}</div>

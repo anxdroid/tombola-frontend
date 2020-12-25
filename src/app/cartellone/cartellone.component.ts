@@ -144,6 +144,7 @@ export class CartelloneComponent implements OnInit {
   lastMessage: string = "";
 
   utentiConnessi: Utente[] = [];
+  utentiConnessiIndex: number[] = [];
 
   lastSeq: number = -1;
 
@@ -151,6 +152,11 @@ export class CartelloneComponent implements OnInit {
   numeroCartelle = 6;
 
   users: User[] = [];
+
+  mustPay: boolean = false;
+
+  lastPremio: number = 0;
+  latestWinners: number[] = [];
 
   constructor(
     private tombolaService: TombolaService,
@@ -161,46 +167,15 @@ export class CartelloneComponent implements OnInit {
     private chatService: ChatService
   ) {
     this.currentUser = this.authenticationService.currentUserValue;
-
-    for (let ir = 0; ir < 11; ir++) {
-      let riga: Numero[] = [];
-      for (let ic = 0; ic < 11; ic++) {
-        let myVal = null;
-        let r = ir;
-        let c = ic;
-
-        if (c != 5 && r != 3 && r != 7) {
-          if (ic > 5) {
-            c--;
-          }
-          if (ir > 3) {
-            r--;
-            if (ir > 7) {
-              r--;
-            }
-          }
-          myVal = r * 10 + c;
-          riga.push(this.numeri[myVal]);
-
-          if (this.numeri[myVal - 1] !== undefined) {
-            this.numeri[myVal - 1].row = ir;
-            this.numeri[myVal - 1].column = ic;
-          }
-          //console.log(myVal, this.numeri[myVal-1]);
-        } else {
-          riga.push(new Numero());
-        }
-
-      }
-      this.cartellone.push(riga);
-      this.closeNumbers.push([0, 0]);
-      this.closeNumbersOld.push([0, 0]);
-      this.newClose.push([false, false]);
-    }
   }
 
   public objectKeys(obj: any) {
     return Object.keys(obj);
+  }
+
+  public pay(): void {
+    this.send("notifyPrize", {winners:this.latestWinners, prize: this.lastPremio});
+    this.mustPay = false;
   }
 
   public receive(message: Messaggio): void {
@@ -214,37 +189,47 @@ export class CartelloneComponent implements OnInit {
         }
       }
 
-      if (message.command == "joinUser" && this.session.stato == 0) {
+      if (message.command == "joinUser") {
         this.waiting = true;
         this.lastMessage = this.getUserById(+message.userId).username + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
-        this.utentiConnessi.push(new Utente(message.userId, message.payload.numeroCartelle));
-        this.montepremi += message.payload.numeroCartelle * +this.session.costoCartella;
-        this.waiting = false;
+        // solo in fase di inizio partita e se un utente non era già dentro
+        if (!this.utentiConnessiIndex.includes(+message.userId)) {
+          this.utentiConnessi.push(new Utente(message.userId, message.payload.numeroCartelle));
+          this.utentiConnessiIndex.push(+message.userId)
+          this.montepremi += message.payload.numeroCartelle * +this.session.costoCartella;
+          this.waiting = false;
 
-        for (let ri of this.objectKeys(this.risultati)) {
-          let risultato = this.risultati[ri];
-          risultato.premio = this.montepremi * risultato.perc / 100;
+          for (let ri of this.objectKeys(this.risultati)) {
+            let risultato = this.risultati[ri];
+            risultato.premio = this.montepremi * risultato.perc / 100;
+          }
         }
-
       }
 
       if (message.command == "notifyWinners") {
         //console.log(message.payload.winners, this.risultati[+message.payload.result].perc);
+        this.mustPay = true;
         let risultato = this.risultati[+message.payload.result]
-        let premio = risultato.premio / message.payload.winners.length;
-        let winners:string = "";
-        for (let winnerId of message.payload.winners) {
+        if (+message.payload.result == 15) {
+          this.session.stato = 2;
+        }
+        this.lastPremio = risultato.premio / message.payload.winners.length;
+        this.latestWinners = message.payload.winners;
+        let winners: string = "";
+        for (let winnerId of this.latestWinners) {
           if (winners != "") {
             winners += ", ";
           }
           winners += this.getUserById(+winnerId).username
         }
-        if (message.payload.winners.includes(this.currentUser.id)) {
+        if (this.latestWinners.includes(this.currentUser.id)) {
           this.lastMessage = "Complimenti ! Hai fatto " + risultato.label + "!";
-        }else{
-          this.lastMessage = winners + " ha"+(message.payload.winners.length > 1 ? "nno" : "")+" fatto " + risultato.label + " vincendo " + premio + " EUR"+(message.payload.winners.length > 1 ? " a testa" : "");
+        } else {
+          this.lastMessage = winners + " ha" + (this.latestWinners.length > 1 ? "nno" : "") + " fatto " + risultato.label + " vincendo " + this.lastPremio + " EUR" + (this.latestWinners.length > 1 ? " a testa" : "");
         }
       }
+    }else{
+      console.log("Discarded", message);
     }
   }
 
@@ -503,7 +488,7 @@ export class CartelloneComponent implements OnInit {
     }
   }
 
-  public getUserById(id:number):User {
+  public getUserById(id: number): User {
     for (let user of this.users) {
       if (user.id == id) {
         return user;
@@ -512,6 +497,16 @@ export class CartelloneComponent implements OnInit {
     return new User();
   }
 
+  public setupWs(): void {
+    // connessione alla websocket
+    this.connection = this.chatService.start(this.sessionId, this.currentUser.id);
+    this.connection.subscribe((msg: Messaggio) => { this.receive(msg) });
+  }
+
+  public sync(): void {
+    this.setupWs();
+    this.resume();
+  }
 
   ngOnInit(): void {
     this.userService.getAll().subscribe(
@@ -525,8 +520,6 @@ export class CartelloneComponent implements OnInit {
 
     this.route.params.subscribe(params => {
       this.sessionId = params['sessionId'];
-      this.connection = this.chatService.start(this.sessionId, this.currentUser.id);
-      this.connection.subscribe((msg: Messaggio) => { this.receive(msg) });
       this.numeroCartelle = 6;
       this.utentiConnessi.push(new Utente(this.currentUser.id, this.numeroCartelle));
 
@@ -541,10 +534,10 @@ export class CartelloneComponent implements OnInit {
             risultato.premio = this.montepremi * risultato.perc / 100;
           }
           if (this.session.stato == 0) {
+            this.setupWs();
             this.setCartellone();
           } else {
-
-            this.resume();
+            this.sync();
           }
         },
         error => {

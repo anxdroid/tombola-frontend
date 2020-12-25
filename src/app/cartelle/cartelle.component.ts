@@ -9,7 +9,7 @@ import { Messaggio } from '../_models/messaggio';
 import { Numero } from '../_models/numero';
 import { Risultato } from '../_models/risultato';
 import { Sessione } from '../_models/sessione';
-import { AuthenticationService, AlertService } from '../_services';
+import { AuthenticationService, AlertService, UserService } from '../_services';
 import { ChatService } from '../_services/chat.service';
 import { TombolaService } from '../_services/tombola.service';
 import { WebSocketService } from '../_services/websocket.service';
@@ -141,9 +141,12 @@ export class CartelleComponent implements OnInit {
 
   owner: boolean = false;
 
+  users: User[] = [];
+
   constructor(
     private formBuilder: FormBuilder,
     private tombolaService: TombolaService,
+    private userService: UserService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private route: ActivatedRoute,
@@ -167,6 +170,7 @@ export class CartelleComponent implements OnInit {
           this.savedCount++;
           if (this.savedCount == this.numeroCartelle) {
             this.send("joinUser", {numeroCartelle:this.numeroCartelle})
+            console.log("Done saving !");
           }
         }
       },
@@ -342,6 +346,7 @@ export class CartelleComponent implements OnInit {
       this.tombolaService.getSession(this.sessionId).subscribe(
         session => {
           this.session = session;
+          //console.log(this.session);
           // carico le cartelle
           this.tombolaService.resumeCartelle(this.sessionId, this.currentUser.id).subscribe(
             cartelle => {
@@ -396,6 +401,7 @@ export class CartelleComponent implements OnInit {
                       cartella.seq = this.lastSeq;
                     }
                     this.saveCartella(cartella, true);
+                    console.log("Saved !", cartella);
                   }
                 },
                 error => {
@@ -430,11 +436,30 @@ export class CartelleComponent implements OnInit {
         this.check(true);
       }
 
+      if (message.command == "joinUser") {
+        this.lastMessage = this.getUserById(+message.userId).username + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
+      }
+
+      if (message.command == "notifyPrize") {
+        this.lastMessage = "Hai vinto " + message.payload.prize + " EUR !";
+        console.log(message);
+      }
+
       if (message.command == "notifyWinners") {
+        //console.log(message.payload.winners, this.risultati[+message.payload.result].perc);
+        let risultato = this.risultati[+message.payload.result]
+        let premio = risultato.premio / message.payload.winners.length;
+        let winners: string = "";
+        for (let winnerId of message.payload.winners) {
+          if (winners != "") {
+            winners += ", ";
+          }
+          winners += this.getUserById(+winnerId).username
+        }
         if (message.payload.winners.includes(this.currentUser.id)) {
-          this.lastMessage = "Complimenti ! Hai fatto " + this.risultati[+message.payload.result].label + "!";
-        }else{
-          this.lastMessage = "Gli utenti " + message.payload.winners + " ha/nno fatto " + this.risultati[+message.payload.result].label + "!";
+          this.lastMessage = "Complimenti ! Hai fatto " + risultato.label + "!";
+        } else {
+          this.lastMessage = winners + " ha" + (message.payload.winners.length > 1 ? "nno" : "") + " fatto " + risultato.label;
         }
       }
     }
@@ -451,29 +476,46 @@ export class CartelleComponent implements OnInit {
     this.connection.next(messaggio);
   }
 
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      //console.log(params);
-      this.sessionId = params['sessionId'];
+  public getUserById(id: number): User {
+    for (let user of this.users) {
+      if (user.id == id) {
+        return user;
+      }
+    }
+    return new User();
+  }
 
+  public setupWs(): void {
       // connessione alla websocket
       this.connection = this.chatService.start(this.sessionId, this.currentUser.id);
       this.connection.subscribe((msg: Messaggio) => { this.receive(msg) });
+  }
+
+  public sync(): void {
+    this.setupWs();
+    this.resume();
+  }
+
+  ngOnInit(): void {
+    this.userService.getAll().subscribe(
+      users => {
+        this.users = users;
+        console.log(this.users);
+      },
+      error => {
+        this.alertService.error(error);
+      });
+
+    this.route.params.subscribe(params => {
+      //console.log(params);
+      this.sessionId = params['sessionId'];
 
       this.tombolaService.getSession(this.sessionId).subscribe(
         session => {
           this.session = session;
           // resume dei dati da backend
           if (this.session.userId != this.currentUser.id) {
-            this.resume();
-          } else {
-            /*
-            this.owner = true;
-            console.log("Owner !");
-            if (this.session.stato == 0) {
-              this.setCartellone();
-            }
-            */
+            this.sync();
           }
         },
         error => {
