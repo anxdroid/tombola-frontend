@@ -1,6 +1,8 @@
 <div class="row justify-content-md-center tavola">
   <div class="col-lg-3">
     {{lastMessage}}
+    <img src="https://media.tenor.com/images/058ff8a79ff935322a3616f9a070fc92/tenor.gif" width="300" *ngIf="winner">
+    <img src="https://data.whicdn.com/images/203330328/original.gif" width="300" *ngIf="paid">
   </div>
   <div class="col-lg-8">
     <h1>Cartelle costo {{session.costoCartella}} &euro;
@@ -32,18 +34,6 @@
       </div>
     </div>
     <div class="container" *ngIf="session != null && numeroCartelle > 0 && !owner">
-      <div class="form-group d-flex">
-        <button *ngIf="session != null && session.stato == 1 && !owner" class="button" (click)="sync()">
-          Force Sync
-        </button>
-      </div>
-      <div class="extracted">
-        <div class="number-meaning" *ngIf="session !== undefined && session.stato < 2">
-          <div id="didascalia">{{numero.text}}</div>
-          <div id="traduzione">{{numero.translation}}</div>
-        </div>
-        <div class="number text-highlight" *ngIf="session !== undefined && session.stato < 2" id="number">{{numero.number}}</div>
-      </div>
       <div class="row" *ngIf="estratti.length > 0">
         <div class="estratti">
           <div *ngFor="let estratto of estratti; let e = index">{{estratto.number}}</div>
@@ -52,12 +42,12 @@
       <div class="row">
         <div class="cartelle-lista">
           <div class="cartella" *ngFor="let cartella of cartelle; let ca = index">
-            <div class="riga" *ngFor="let r of createRange(3)">
-              <div [attr.class]="cartella.risultatiArray[r] > 0 ? 'risultato checked' : 'risultato'">
-                {{(cartella.risultatiArray[r] > 0) ? cartella.risultatiArray[r] : ''}}
+            <div class="riga" *ngFor="let riga of cartella.numeri; let r = index">
+              <div [attr.class]="cartella.risultatiArray[+r] > 0 ? 'risultato checked' : 'risultato'">
+                {{(cartella.risultatiArray[+r] > 0) ? cartella.risultatiArray[+r] : ''}}
               </div>
-              <div [attr.id]="'id'+ca+'x'+r+'x'+c" *ngFor="let c of createRange(5)" [attr.class]="cartella.numeri[r][c].issued?'cella selected' : 'cella'">
-                <span>{{cartella.numeri[r][c].number}}</span>
+              <div *ngFor="let numero of riga; let c = index" [attr.class]="numero.issued?'cella selected' : 'cella'">
+                <span>{{numero.number}}</span>
               </div>
             </div>
           </div>

@@ -1,33 +1,36 @@
 <div class="intro mx-auto">
-    <h1>Nuova Partita</h1>
-    <form [formGroup]="sessioneForm" (ngSubmit)="createSession()">
-        <div class="form-group">
-            <label for="username">Costo Cartella</label>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">€</span>
-                </div>
-                <input type="text" formControlName="costoCartella" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.costoCartella.errors }" />
-              </div>
-            <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-                <div *ngIf="f.username.errors.required">Costo Cartella is required</div>
-            </div>
+  <h1>Nuova Partita</h1>
+  <form [formGroup]="sessioneForm" (ngSubmit)="createSession()">
+    <div class="form-group">
+      <label for="username">Costo Cartella</label>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1">€</span>
         </div>
-        <div class="form-group d-flex mt-4">
-            <button [disabled]="loading" class="button">
-                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                Crea
-            </button>
-        </div>
-    </form>
-    <hr  *ngIf="sessions.length > 0">
-    <div *ngIf="sessions.length > 0" class="widget">
-        <h3>Archivio partite</h3>
-        <ul>
-            <li *ngFor="let session of sessions.slice().reverse()">
-                <div><span class="font-weight-bold">Partita {{session.id}}:</span> {{session.createdAt}} - <span class="text-secondary">{{session.costoCartella}} &euro;</span></div> 
-                <a class="button button-small" [routerLink]="[getCartelleLink(session), session.id]">Vai</a>
-            </li>
-        </ul>
+        <input type="text" formControlName="costoCartella" class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f.costoCartella.errors }" />
+      </div>
+      <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+        <div *ngIf="f.username.errors.required">Costo Cartella is required</div>
+      </div>
     </div>
+    <div class="form-group d-flex mt-4">
+      <button [disabled]="loading" class="button">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+        Crea
+      </button>
+    </div>
+  </form>
+  <hr *ngIf="sessions.length > 0">
+  <div *ngIf="sessions.length > 0" class="widget">
+    <h3>Archivio partite</h3>
+    <ul>
+      <li *ngFor="let session of sessions.slice().reverse()">
+          <div><span class="font-weight-bold">Partita {{session.id}}:</span>
+            {{session.createdAt}} - <span class="text-secondary">{{session.costoCartella}} &euro;</span>
+          </div>
+          <a class="button button-small" [routerLink]="[getCartelleLink(session), session.id]">Vai</a>
+      </li>
+    </ul>
+  </div>
 </div>

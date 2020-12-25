@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 
 @Injectable()
 export class Numero {
-  "number": string;
+  "number": string = "";
   "text": string;
   "translation": string;
   "issued": boolean = false;

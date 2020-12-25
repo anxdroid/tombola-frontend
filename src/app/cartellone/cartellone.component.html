@@ -1,35 +1,43 @@
 <div class="row justify-content-md-center tavola">
   <div class="col-lg-3 mt-4">
-    <h2>{{(session !== undefined && session.stato < 2) ? lastMessage : "Partita conclusa !"}}</h2>
-    <h3>Montepremi: {{montepremi}} &euro;</h3>
-    <ul>
-      <li *ngFor="let ri of objectKeys(risultati); let r = index">
-        <span [attr.class]="(session!== undefined && +session.ultimoRisultato < +ri) ? 'font-weight-bold text-uppercase' : 'text-uppercase'">{{risultati[ri].label}} - <span class="text-highlight"> {{risultati[ri].premio}} &euro;</span></span>
-      </li>
-    </ul>
-    <p>{{utentiConnessi.length}} utenti connessi</p>
-    <div class="form-group d-flex">
-      <button class="button" (click)="sync()">
-        Force Sync
-      </button>
-    </div>
-    <div class="form-group d-flex" *ngIf="mustPay">
-      <button class="button" (click)="pay()">
-        Pay !
-      </button>
-    </div>
+    <h2>{{(session !== undefined && session.stato < 2) ? lastMessage : "Partita conclusa !" }}</h2>
+        <h3>Montepremi: {{montepremi}} &euro;</h3>
+        <ul>
+          <li *ngFor="let ri of objectKeys(risultati); let r = index">
+            <span
+              [attr.class]="(session!== undefined && +session.ultimoRisultato < +ri) ? 'font-weight-bold text-uppercase' : 'text-uppercase'">
+              {{risultati[ri].label}} - <span class="text-highlight"> {{risultati[ri].premio}} &euro; -
+                <span *ngFor="let user of risultati[ri].users; let u = index">
+                  {{getUserById(user).username}}
+                </span></span>
+              </span>
+          </li>
+        </ul>
+        <p>{{utentiConnessi.length}} utenti connessi</p>
+        <div class="form-group d-flex">
+          <button class="button" (click)="sync()">
+            Force Sync
+          </button>
+        </div>
+        <div class="form-group d-flex" *ngIf="mustPay">
+          <button class="button" (click)="pay()">
+            Pay !
+          </button>
+        </div>
   </div>
   <div class="col-lg-8">
     <div class="action">
       <div class="extract">
-        <button id="extract" *ngIf="session !== undefined && session.stato < 2" class="button" [disabled]="waiting || mustPay" (click)="extract()">{{(waiting) ? "Attendi..." : "Estrai !"}}</button>
+        <button id="extract" *ngIf="session !== undefined && session.stato < 2" class="button"
+          [disabled]="waiting || mustPay" (click)="extract()">{{(waiting) ? "Attendi..." : "Estrai !"}}</button>
       </div>
       <div class="extracted">
         <div class="number-meaning" *ngIf="session !== undefined && session.stato < 2">
           <div id="didascalia">{{numero.text}}</div>
           <div id="traduzione">{{numero.translation}}</div>
         </div>
-        <div class="number text-highlight" *ngIf="session !== undefined && session.stato < 2" id="number">{{numero.number}}</div>
+        <div class="number text-highlight" *ngIf="session !== undefined && session.stato < 2" id="number">
+          {{numero.number}}</div>
       </div>
     </div>
     <div class="cartellone">
@@ -49,5 +57,3 @@
     </div>
   </div>
 </div>
-
-

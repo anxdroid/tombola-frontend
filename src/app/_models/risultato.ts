@@ -5,6 +5,7 @@ export class Risultato {
   label: String = "";
   perc: Number = 0;
   premio: number = 0;
+  users: number[] = [];
 
   constructor(label: String, perc: Number) {
     this.label = label;

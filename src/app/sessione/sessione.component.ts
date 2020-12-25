@@ -23,7 +23,6 @@ export class SessioneComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private tombolaService: TombolaService,
-    private router: Router,
     private authenticationService: AuthenticationService,
     private alertService: AlertService) {
     this.currentUser = this.authenticationService.currentUserValue;
@@ -42,7 +41,13 @@ export class SessioneComponent implements OnInit {
     this.tombolaService.listSessions().subscribe(
       data => {
         console.log(data);
-        this.sessions = data;
+        //this.sessions = data;
+        this.sessions = [];
+        for (let session of data) {
+          if (session.stato == 0) {
+            this.sessions.push(session);
+          }
+        }
       },
       error => {
         this.alertService.error(error);
