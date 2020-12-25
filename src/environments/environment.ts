@@ -4,11 +4,10 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:4443',
-  wsUrl: 'wss://localhost:4443',
-  //apiUrl: 'https://antopaoletti.ddns.net:4443',
-  //wsUrl: 'wss://antopaoletti.ddns.net:4443',
-  wsReconnectInterval: 2
+  //apiUrl: 'https://localhost:4443',
+  //wsUrl: 'wss://localhost:4443',
+  apiUrl: 'https://antopaoletti.ddns.net:4443',
+  wsUrl: 'wss://antopaoletti.ddns.net:4443'
 };
 
 /*

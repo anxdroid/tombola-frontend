@@ -37,6 +37,13 @@
           Force Sync
         </button>
       </div>
+      <div class="extracted">
+        <div class="number-meaning" *ngIf="session !== undefined && session.stato < 2">
+          <div id="didascalia">{{numero.text}}</div>
+          <div id="traduzione">{{numero.translation}}</div>
+        </div>
+        <div class="number text-highlight" *ngIf="session !== undefined && session.stato < 2" id="number">{{numero.number}}</div>
+      </div>
       <div class="row" *ngIf="estratti.length > 0">
         <div class="estratti">
           <div *ngFor="let estratto of estratti; let e = index">{{estratto.number}}</div>

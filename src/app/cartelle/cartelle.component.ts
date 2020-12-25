@@ -346,7 +346,7 @@ export class CartelleComponent implements OnInit {
       this.tombolaService.getSession(this.sessionId).subscribe(
         session => {
           this.session = session;
-          //console.log(this.session);
+          console.log(this.session);
           // carico le cartelle
           this.tombolaService.resumeCartelle(this.sessionId, this.currentUser.id).subscribe(
             cartelle => {
@@ -424,7 +424,7 @@ export class CartelleComponent implements OnInit {
     if (+message.userId != +this.currentUser.id) {
       // nuova estrazione
       if (message.command == "extract") {
-        let payload = JSON.parse(message.payload);
+        let payload = message.payload;
         let numero = this.numeri[+payload.number - 1];
         if (+payload.seq > this.lastSeq) {
           this.lastSeq = +payload.seq;
