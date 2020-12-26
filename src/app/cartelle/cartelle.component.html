@@ -1,14 +1,6 @@
 <div class="row justify-content-md-center tavola">
   <div class="col-lg-3">
     {{lastMessage}}
-    <div class="extracted">
-      <div class="number-meaning" *ngIf="session !== undefined && session.stato < 2">
-        <div id="didascalia">{{estratto.text}}</div>
-        <div id="traduzione">{{estratto.translation}}</div>
-      </div>
-      <div class="number text-highlight" *ngIf="session !== undefined && session.stato < 2" id="number">
-        {{estratto.number}}</div>
-    </div>
     <img src="https://media.tenor.com/images/058ff8a79ff935322a3616f9a070fc92/tenor.gif" width="300" *ngIf="winner">
     <img src="https://data.whicdn.com/images/203330328/original.gif" width="300" *ngIf="paid">
   </div>
@@ -42,9 +34,10 @@
       </div>
     </div>
     <div class="container" *ngIf="session != null && numeroCartelle > 0 && !owner">
+      <h2><div id="didascalia">{{estratto.number}} - {{estratto.text}}</div></h2>
       <div class="row" *ngIf="estratti.length > 0">
         <div class="estratti">
-          <div *ngFor="let estratto of getLastEstratti(10); let e = index">
+          <div *ngFor="let estratto of getLastEstratti(10); let e = index" [attr.class]="(e === (getLastEstratti(10).length - 1)) ? 'estratto-selected' : ''">
             {{estratto.number}}</div>
         </div>
       </div>

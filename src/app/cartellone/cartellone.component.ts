@@ -97,7 +97,7 @@ export class CartelloneComponent implements OnInit {
               this.users = users;
 
               this.waiting = true;
-              this.lastMessage = this.getUserById(+message.userId).username + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
+              this.lastMessage = this.getUserById(+message.userId).username + " si e' connesso con " + message.payload.numeroCartelle + " cartelle !";
               // solo in fase di inizio partita e se un utente non era già dentro
               if (!this.utentiConnessiIndex.includes(+message.userId)) {
                 this.utentiConnessi.push(new Utente(message.userId, message.payload.numeroCartelle));
@@ -419,7 +419,18 @@ export class CartelloneComponent implements OnInit {
     this.connection.subscribe((msg: Messaggio) => { this.receive(msg) });
   }
 
+  public resetIssues() {
+    for (let numero of this.numeri) {
+      numero.issued = false;
+      numero.cartelle = [];
+    }
+  }
+
   public sync(): void {
+    this.estratti = [];
+    this.cartelle = [];
+    this.lastMessage = "";
+    this.resetIssues();
     this.setupWs();
     this.resume();
   }
@@ -436,8 +447,7 @@ export class CartelloneComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.estratti = [];
-    this.cartelle = [];
+    this.resetIssues();
     this.lastMessage = "";
     this.getUsers();
     this.route.params.subscribe(params => {

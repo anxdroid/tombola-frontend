@@ -72,6 +72,13 @@ export class CartelleComponent implements OnInit {
 
   get f() { return this.cartelleForm.controls; }
 
+  public resetIssues() {
+    for (let numero of this.numeri) {
+      numero.issued = false;
+      numero.cartelle = [];
+    }
+  }
+
   public saveCartella(cartella: Cartella, count: boolean) {
     this.tombolaService.saveCartella(this.sessionId, this.currentUser.id, cartella).subscribe(
       data => {
@@ -120,7 +127,6 @@ export class CartelleComponent implements OnInit {
   public setCartelle(): void {
     this.numeroCartelle = this.f.numeroCartelle.value;
     //console.log(this.numeroCartelle);
-    this.cartelle = [];
     for (let ca = 0; ca < +this.numeroCartelle; ca++) {
       let cartella = new Cartella(this.sessionId, this.currentUser.id);
       cartella.risultatiArray = [];
@@ -322,7 +328,7 @@ export class CartelleComponent implements OnInit {
       }
 
       if (message.command == "joinUser") {
-        this.lastMessage = this.getUserById(+message.userId).username + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
+        this.lastMessage = this.getUserById(+message.userId).username + " si e' connesso con " + message.payload.numeroCartelle + " cartelle !";
       }
 
       if (message.command == "notifyPrize") {
@@ -352,12 +358,12 @@ export class CartelleComponent implements OnInit {
     }
   }
 
-  public getLastEstratti(len:number):Estrazione[] {
-    let lastEstratti:Estrazione[] = [];
+  public getLastEstratti(len: number): Estrazione[] {
+    let lastEstratti: Estrazione[] = [];
     if (this.estratti.length < len) {
       len = this.estratti.length;
     }
-    for(let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       lastEstratti.push(this.estratti[this.estratti.length - len + i]);
     }
     return lastEstratti;
@@ -383,6 +389,17 @@ export class CartelleComponent implements OnInit {
     return new User();
   }
 
+  public getUsers(): void {
+    this.userService.getAll().subscribe(
+      users => {
+        this.users = users;
+        //console.log(this.users);
+      },
+      error => {
+        this.alertService.error(error);
+      });
+  }
+
   public setupWs(): void {
     // connessione alla websocket
     this.connection = this.chatService.start(this.sessionId, this.currentUser.id);
@@ -391,21 +408,17 @@ export class CartelleComponent implements OnInit {
 
   public sync(): void {
     this.lastMessage = "";
+    this.cartelle = [];
+    this.estratti = [];
+    this.resetIssues();
     this.setupWs();
     this.resume();
   }
 
   ngOnInit(): void {
-    this.estratti = [];
-    this.cartelle = [];
-    this.userService.getAll().subscribe(
-      users => {
-        this.users = users;
-        console.log(this.users);
-      },
-      error => {
-        this.alertService.error(error);
-      });
+    this.resetIssues();
+    this.lastMessage = "";
+    this.getUsers();
 
     this.route.params.subscribe(params => {
       this.sessionId = params['sessionId'];

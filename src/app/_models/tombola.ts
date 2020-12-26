@@ -107,7 +107,7 @@ export abstract class Tombola {
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "3", "text": "l'idromassaggio", "translation": "" },
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "4", "text": "il lego", "translation": "" },
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "5", "text": "un giocattolo", "translation": "" },
-    { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "6", "text": "un numero che ha lettere", "translation": "" },
+    { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "6", "text": "un numero che ha sei lettere", "translation": "" },
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "7", "text": "fai la seconda elementare", "translation": "" },
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "8", "text": "numero al contrario", "translation": "" },
     { "cartelle": [], "row": -1, "column": -1, "issued": false, "number": "9", "text": "nove giochi per nove bimbi", "translation": "" },
