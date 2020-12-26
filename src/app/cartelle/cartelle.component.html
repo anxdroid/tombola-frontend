@@ -44,7 +44,8 @@
     <div class="container" *ngIf="session != null && numeroCartelle > 0 && !owner">
       <div class="row" *ngIf="estratti.length > 0">
         <div class="estratti">
-          <div *ngFor="let estratto of estratti; let e = index">{{estratto.number}}</div>
+          <div *ngFor="let estratto of estratti; let e = index">
+            <span *ngIf="e > (estratti.length - 20)">{{estratto.number}}</span></div>
         </div>
       </div>
       <div class="row">

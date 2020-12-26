@@ -81,65 +81,67 @@ export class CartelloneComponent implements OnInit {
   }
 
   public receive(message: Messaggio): void {
-    if (+message.userId != +this.currentUser.id && message.command != 'notifyPrize') {
-      if (message.command == "notifySyncStatus") {
-        //console.log(message);
-        if (message.payload.sync == 100 && message.payload.seq == this.session.ultimoSeq && this.utentiConnessi.length > 1) {
-          this.lastMessage = "Tutti gli utenti sono in sync !";
-          //console.log("All in sync ! Move on !");
-          this.waiting = false;
-        }
-      }
-      if (message.command == "joinUser") {
-        this.userService.getAll().subscribe(
-          users => {
-            this.users = users;
-
-            this.waiting = true;
-            this.lastMessage = this.getUserById(+message.userId).username + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
-            // solo in fase di inizio partita e se un utente non era già dentro
-            if (!this.utentiConnessiIndex.includes(+message.userId)) {
-              this.utentiConnessi.push(new Utente(message.userId, message.payload.numeroCartelle));
-              this.utentiConnessiIndex.push(+message.userId)
-              this.montepremi += message.payload.numeroCartelle * +this.session.costoCartella;
-              this.waiting = false;
-
-              for (let ri of this.objectKeys(this.risultati)) {
-                let risultato = this.risultati[ri];
-                risultato.premio = this.montepremi * risultato.perc / 100;
-              }
-            }
-          },
-          error => {
-            this.alertService.error(error);
-          });
-      }
-
-      if (message.command == "notifyWinners") {
-        //console.log(message.payload.winners, this.risultati[+message.payload.result].perc);
-        this.mustPay = true;
-        let risultato = this.risultati[+message.payload.result]
-        if (+message.payload.result == 15) {
-          this.session.stato = 2;
-        }
-        this.lastPremio = risultato.premio / message.payload.winners.length;
-        this.latestWinners = message.payload.winners;
-        let winners: string = "";
-        this.risultati[+message.payload.result].users = message.payload.winners;
-        for (let winnerId of this.latestWinners) {
-          if (winners != "") {
-            winners += ", ";
+    if (+message.sessionId == this.sessionId) {
+      if (+message.userId != +this.currentUser.id && message.command != 'notifyPrize') {
+        if (message.command == "notifySyncStatus") {
+          //console.log(message);
+          if (message.payload.sync == 100 && message.payload.seq == this.session.ultimoSeq && this.utentiConnessi.length > 1) {
+            this.lastMessage = "Tutti gli utenti sono in sync !";
+            //console.log("All in sync ! Move on !");
+            this.waiting = false;
           }
-          winners += this.getUserById(+winnerId).username
         }
-        if (this.latestWinners.includes(this.currentUser.id)) {
-          this.lastMessage = "Complimenti ! Hai fatto " + risultato.label + "!";
-        } else {
-          this.lastMessage = winners + " ha" + (this.latestWinners.length > 1 ? "nno" : "") + " fatto " + risultato.label + " vincendo " + this.lastPremio + " EUR" + (this.latestWinners.length > 1 ? " a testa" : "");
+        if (message.command == "joinUser") {
+          this.userService.getAll().subscribe(
+            users => {
+              this.users = users;
+
+              this.waiting = true;
+              this.lastMessage = this.getUserById(+message.userId).username + " si è connesso con " + message.payload.numeroCartelle + " cartelle !";
+              // solo in fase di inizio partita e se un utente non era già dentro
+              if (!this.utentiConnessiIndex.includes(+message.userId)) {
+                this.utentiConnessi.push(new Utente(message.userId, message.payload.numeroCartelle));
+                this.utentiConnessiIndex.push(+message.userId)
+                this.montepremi += message.payload.numeroCartelle * +this.session.costoCartella;
+                this.waiting = false;
+
+                for (let ri of this.objectKeys(this.risultati)) {
+                  let risultato = this.risultati[ri];
+                  risultato.premio = this.montepremi * risultato.perc / 100;
+                }
+              }
+            },
+            error => {
+              this.alertService.error(error);
+            });
         }
+
+        if (message.command == "notifyWinners") {
+          //console.log(message.payload.winners, this.risultati[+message.payload.result].perc);
+          this.mustPay = true;
+          let risultato = this.risultati[+message.payload.result]
+          if (+message.payload.result == 15) {
+            this.session.stato = 2;
+          }
+          this.lastPremio = risultato.premio / message.payload.winners.length;
+          this.latestWinners = message.payload.winners;
+          let winners: string = "";
+          this.risultati[+message.payload.result].users = message.payload.winners;
+          for (let winnerId of this.latestWinners) {
+            if (winners != "") {
+              winners += ", ";
+            }
+            winners += this.getUserById(+winnerId).username
+          }
+          if (this.latestWinners.includes(this.currentUser.id)) {
+            this.lastMessage = "Complimenti ! Hai fatto " + risultato.label + "!";
+          } else {
+            this.lastMessage = winners + " ha" + (this.latestWinners.length > 1 ? "nno" : "") + " fatto " + risultato.label + " vincendo " + this.lastPremio + " EUR" + (this.latestWinners.length > 1 ? " a testa" : "");
+          }
+        }
+      } else {
+        console.log("Discarded", message);
       }
-    } else {
-      console.log("Discarded", message);
     }
   }
 
@@ -322,6 +324,9 @@ export class CartelloneComponent implements OnInit {
 
   // carica lo stato delle cartelle dal backend
   public resume(): void {
+    this.estratti = [];
+    this.cartelle = [];
+    this.lastMessage = "";
     if (this.sessionId > 0) {
       // carico le info sulla sessione
       this.tombolaService.getSession(this.sessionId).subscribe(
@@ -433,6 +438,7 @@ export class CartelloneComponent implements OnInit {
   ngOnInit(): void {
     this.estratti = [];
     this.cartelle = [];
+    this.lastMessage = "";
     this.getUsers();
     this.route.params.subscribe(params => {
       this.sessionId = params['sessionId'];

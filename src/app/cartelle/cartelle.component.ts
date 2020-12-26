@@ -300,7 +300,7 @@ export class CartelleComponent implements OnInit {
 
   // ricezione dei messaggi da websocket
   public receive(message: Messaggio): void {
-    if (+message.userId != +this.currentUser.id) {
+    if (+message.userId != +this.currentUser.id && +message.sessionId == this.sessionId) {
       if (message.command == "forceSync") {
         this.sync();
       }
