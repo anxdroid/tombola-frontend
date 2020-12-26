@@ -352,6 +352,17 @@ export class CartelleComponent implements OnInit {
     }
   }
 
+  public getLastEstratti(len:number):Estrazione[] {
+    let lastEstratti:Estrazione[] = [];
+    if (this.estratti.length < len) {
+      len = this.estratti.length;
+    }
+    for(let i = 0; i < len; i++) {
+      lastEstratti.push(this.estratti[this.estratti.length - len + i]);
+    }
+    return lastEstratti;
+  }
+
   // invio di messaggi su websocket
   public send(command: string, payload: any) {
     let messaggio = new Messaggio();
